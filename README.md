@@ -3,9 +3,9 @@
 FINAL GROUP MARK: 87/100
 
 Highlights: 
-- Introduction to Objected Oriented Programming.
+- Introduction to Objected Oriented Programming (Java).
 - Implemented design patterns in backend.
-- Learned basic frontend.
+- Learned basic frontend (HTML).
 - Engaged in pair programming.
 - JUnit and integration testing.
 

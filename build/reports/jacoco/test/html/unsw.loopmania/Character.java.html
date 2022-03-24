@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Character.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">21T2-cs2511-project</a> &gt; <a href="index.source.html" class="el_package">unsw.loopmania</a> &gt; <span class="el_source">Character.java</span></div><h1>Character.java</h1><pre class="source lang-java linenums">package unsw.loopmania;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+
+/**
+ * represents the main character in the backend of the game world
+ */
+public class Character extends MovingEntity {
+    // isBuffed used to determine if the character is in range of a campfire
+    private boolean isBuffed;
+<span class="fc" id="L15">    private final int initialAttack = 10;</span>
+<span class="fc" id="L16">    private final int initialDefense = 2;</span>
+    private ArrayList&lt;AlliedSoldier&gt; allies;
+<span class="fc" id="L18">    private IntegerProperty alliesNumValue = new SimpleIntegerProperty(this, &quot;alliesNumValue&quot;);</span>
+
+    /**
+     * Constructor for the character class.
+     * 
+     * @param position
+     */
+    public Character(PathPosition position) {
+<span class="fc" id="L26">        super(position, new Statistics(100, 10, 2, 0, 0));</span>
+<span class="fc" id="L27">        allies = new ArrayList&lt;AlliedSoldier&gt;();</span>
+<span class="fc" id="L28">        isBuffed = false;</span>
+<span class="fc" id="L29">    }</span>
+
+    /**
+     * Move the character in the game path
+     */
+    public void move() {
+<span class="fc" id="L35">        super.moveDownPath();</span>
+<span class="fc" id="L36">    }</span>
+
+    /**
+     * Character collects gold and experience dropped by the enemy they just killed
+     * 
+     * @param e
+     */
+    public void collectRewards(Enemy e) {
+<span class="fc" id="L44">        Statistics eStats = e.getStats();</span>
+<span class="fc" id="L45">        stats.setGold(eStats.getGold() + stats.getGold());</span>
+<span class="fc" id="L46">        stats.setExp(eStats.getExp() + stats.getExp());</span>
+<span class="fc" id="L47">    }</span>
+
+    /**
+     * Set the isBuffed boolean to determine if the character is in range of a
+     * campfire
+     * 
+     * @param isBuffed
+     */
+    public void setIsBuffed(boolean isBuffed) {
+<span class="fc" id="L56">        this.isBuffed = isBuffed;</span>
+<span class="fc" id="L57">    }</span>
+
+    /**
+     * Character's method to attack enemies
+     */
+    public void attack(MovingEntity opponent, List&lt;Item&gt; equippedItems) {
+<span class="fc" id="L63">        updateStatistics(equippedItems);</span>
+<span class="fc" id="L64">        int attack = stats.getAttack();</span>
+<span class="fc" id="L65">        attack -= opponent.getDefense();</span>
+<span class="fc" id="L66">        opponent.reduceHealth(attack);</span>
+<span class="fc" id="L67">    }</span>
+
+    /**
+     * Update the character's attack and defense based on the currently equipped
+     * items
+     * 
+     * @param equippedItems
+     */
+    public void updateStatistics(List&lt;Item&gt; equippedItems) {
+<span class="fc" id="L76">        super.setAttack(this.initialAttack);</span>
+<span class="fc" id="L77">        super.setDefense(this.initialDefense);</span>
+<span class="fc" id="L78">        int attack = super.getAttack();</span>
+<span class="fc" id="L79">        int defense = super.getDefense();</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        for (Item equippedItem : equippedItems) {</span>
+<span class="pc bpc" id="L81" title="3 of 4 branches missed.">            if (equippedItem != null &amp;&amp; equippedItem instanceof Weapon) {</span>
+<span class="nc" id="L82">                attack += equippedItem.getIncrease();</span>
+<span class="pc bpc" id="L83" title="3 of 4 branches missed.">            } else if (equippedItem != null &amp;&amp; equippedItem instanceof Equipment) {</span>
+<span class="nc" id="L84">                defense += equippedItem.getIncrease();</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                if (equippedItem instanceof Helmet) {</span>
+<span class="nc" id="L86">                    Helmet helmet = (Helmet) equippedItem;</span>
+<span class="nc" id="L87">                    attack -= helmet.decreaseAttack();</span>
+                }
+            }
+<span class="fc" id="L90">        }</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (this.isBuffed) {</span>
+<span class="fc" id="L92">            attack = attack * 2;</span>
+        }
+<span class="fc" id="L94">        super.setAttack(attack);</span>
+<span class="fc" id="L95">        super.setDefense(defense);</span>
+<span class="fc" id="L96">    }</span>
+
+    /**
+     * Add a new allied soldier to the allies list
+     * 
+     * @return
+     */
+    public void addAlliedSoldier(AlliedSoldier newSoldier) {
+<span class="fc" id="L104">        allies.add(newSoldier);</span>
+<span class="fc" id="L105">    }</span>
+
+    /**
+     * Getter for the list of allies the character currently has
+     */
+    public ArrayList&lt;AlliedSoldier&gt; getAllies() {
+<span class="fc" id="L111">        return allies;</span>
+    }
+
+    /**
+     * determine if the character has at least one allied soldier
+     * 
+     * @return
+     */
+    public boolean alliedSoldierExists() {
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        if (allies.size() &gt; 0) {</span>
+<span class="fc" id="L121">            return true;</span>
+        }
+<span class="fc" id="L123">        return false;</span>
+    }
+
+    /**
+     * return one allied soldier of the character
+     * 
+     * @return
+     */
+    public AlliedSoldier getAnAlliedSoldier() {
+<span class="fc" id="L132">        return allies.get(0);</span>
+    }
+
+    /**
+     * remove a soldier from the allied soldier array
+     */
+    public void removeSoldier(AlliedSoldier deadSoldier) {
+<span class="nc" id="L139">        allies.remove(deadSoldier);</span>
+<span class="nc" id="L140">        this.decrementAlliesNumValueProperty();</span>
+<span class="nc" id="L141">    }</span>
+
+    public IntegerProperty alliesNumValueProperty() {
+<span class="nc" id="L144">        return alliesNumValue;</span>
+    }
+
+    public int getAlliesNumValueProperty() {
+<span class="fc" id="L148">        return alliesNumValue.get();</span>
+    }
+
+    public void incrementAlliesNumValueProperty() {
+<span class="fc" id="L152">        this.alliesNumValue.set(getAlliesNumValueProperty() + 1);</span>
+<span class="fc" id="L153">    }</span>
+
+    public void decrementAlliesNumValueProperty() {
+<span class="nc" id="L156">        this.alliesNumValue.set(getAlliesNumValueProperty() - 1);</span>
+<span class="nc" id="L157">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

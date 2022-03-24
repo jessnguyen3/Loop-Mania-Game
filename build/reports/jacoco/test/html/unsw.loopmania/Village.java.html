@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Village.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">21T2-cs2511-project</a> &gt; <a href="index.source.html" class="el_package">unsw.loopmania</a> &gt; <span class="el_source">Village.java</span></div><h1>Village.java</h1><pre class="source lang-java linenums">package unsw.loopmania;
+
+import javafx.beans.property.SimpleIntegerProperty;
+
+/**
+ * Represents a Village building in the backend game world
+ */
+public class Village extends Building implements CharacterTriggerBuilding {
+    public Village(SimpleIntegerProperty x, SimpleIntegerProperty y) {
+<span class="fc" id="L10">        super(x, y);</span>
+<span class="fc" id="L11">        this.type = &quot;Village&quot;;</span>
+<span class="fc" id="L12">    }</span>
+
+    /**
+     * Perform action on character when character steps on Village
+     * 
+     */
+    // @Override
+
+    public void performActionOnCharacter(Character character) {
+<span class="nc" id="L21">        healCharacter(character.getStats());</span>
+<span class="nc" id="L22">    }</span>
+
+    /**
+     * Heal character for up to 20 health
+     */
+    public void healCharacter(Statistics stats) {
+
+        // if heal amount is greater than 100, set health to 100 (max health)
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        if (stats.getHealth() &gt;= 90) {</span>
+<span class="nc" id="L31">            stats.setHealth(100);</span>
+        }
+
+        else {
+            // Heal the character for 10 points
+<span class="nc" id="L36">            stats.setHealth(stats.getHealth() + 10);</span>
+        }
+<span class="nc" id="L38">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

@@ -1,0 +1,1281 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoopManiaWorld.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">21T2-cs2511-project</a> &gt; <a href="index.source.html" class="el_package">unsw.loopmania</a> &gt; <span class="el_source">LoopManiaWorld.java</span></div><h1>LoopManiaWorld.java</h1><pre class="source lang-java linenums">package unsw.loopmania;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import org.javatuples.Pair;
+import org.json.JSONArray;
+
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+
+/**
+ * A backend world.
+ *
+ * A world can contain many entities, each occupy a square. More than one entity
+ * can occupy the same square.
+ */
+public class LoopManiaWorld {
+
+    public static final int unequippedInventoryWidth = 4;
+    public static final int unequippedInventoryHeight = 4;
+    public static final int equippedInventoryLength = 4;
+    private static final int SLUG = 0;
+    private static final int ZOMBIE = 1;
+    private static final int VAMPIRE = 2;
+
+    /**
+     * Randomisers control the spawn rate of gold, items and cards.
+     * ITEMRANDOMISER &gt;= 7 will spawn items more rarely after battles
+     * CARDRANDOMISER &gt;= 8 will spawn cards more rarely after battles
+     * GOLDRANDOMISER &gt;= 0 will spawn gold more rarely as the character moves
+     */
+    private static final int GOLDRANDOMISER = 50;
+    private static final int ITEMRANDOMISER = 30;
+    private static final int CARDRANDOMISER = 20;
+    /**
+     * width of the world in GridPane cells
+     */
+    private int width;
+
+    /**
+     * height of the world in GridPane cells
+     */
+    private int height;
+
+    /**
+     * number of loops the character has completed
+     */
+    static int numLoops;
+
+    /**
+     * Number of loops for when the vampire will respawn
+     */
+<span class="fc" id="L55">    private int vampireRespawnLoop = 5;</span>
+
+    /**
+     * Number of loops for when the zombie will respawn
+     */
+<span class="fc" id="L60">    private int zombieRespawnLoop = 1;</span>
+    /**
+     * number of loops the character has completed
+     */
+    private Goals worldGoals;
+
+    /**
+     * generic entitites - i.e. those which don't have dedicated fields
+     */
+    private List&lt;Entity&gt; nonSpecifiedEntities;
+
+    private Character character;
+
+    private List&lt;Enemy&gt; enemies;
+
+    private List&lt;Card&gt; cardEntities;
+
+    private List&lt;Item&gt; unequippedInventoryItems;
+
+    private List&lt;Item&gt; equippedInventoryItems;
+
+    private List&lt;Building&gt; buildingEntities;
+
+    private List&lt;Gold&gt; goldEntities;
+
+    private List&lt;String&gt; allRareItems;
+
+<span class="fc" id="L87">    private boolean gameOver = false;</span>
+
+    Pair&lt;Integer, Integer&gt; goldPosition;
+
+    public boolean isGameOver() {
+<span class="fc" id="L92">        return gameOver;</span>
+    }
+
+    public void setGameOver(boolean gameOver) {
+<span class="fc" id="L96">        this.gameOver = gameOver;</span>
+<span class="fc" id="L97">    }</span>
+
+<span class="fc" id="L99">    private boolean gameWon = false;</span>
+
+    public boolean isGameWon() {
+<span class="fc" id="L102">        return gameWon;</span>
+    }
+
+    public void setGameWon(boolean gameWon) {
+<span class="nc" id="L106">        this.gameWon = gameWon;</span>
+<span class="nc" id="L107">    }</span>
+
+<span class="fc" id="L109">    private Shop shop = new Shop();</span>
+
+    public Shop getShop() {
+<span class="nc" id="L112">        return shop;</span>
+    }
+
+<span class="fc" id="L115">    private boolean inShop = false;</span>
+
+    public boolean isInShop() {
+<span class="nc" id="L118">        return inShop;</span>
+    }
+
+    public void setInShop(boolean inShop) {
+<span class="fc" id="L122">        this.inShop = inShop;</span>
+<span class="fc" id="L123">    }</span>
+
+<span class="fc" id="L125">    private SimpleIntegerProperty loopsValue = new SimpleIntegerProperty(this, &quot;loopsValue&quot;);</span>
+
+    public IntegerProperty LoopsValueProperty() {
+<span class="nc" id="L128">        return loopsValue;</span>
+    }
+
+    public int getLoopsProperty() {
+<span class="fc" id="L132">        return loopsValue.get();</span>
+    }
+
+    public void incrementLoopsProperty() {
+<span class="fc" id="L136">        this.loopsValue.set(getLoopsProperty() + 1);</span>
+<span class="fc" id="L137">    }</span>
+
+    public List&lt;Item&gt; getUnequippedInventoryItems() {
+<span class="fc" id="L140">        return unequippedInventoryItems;</span>
+    }
+
+    public List&lt;Item&gt; getEquippedInventoryItems() {
+<span class="fc" id="L144">        return equippedInventoryItems;</span>
+    }
+
+    public List&lt;Card&gt; getCardEntities() {
+<span class="fc" id="L148">        return cardEntities;</span>
+    }
+
+    // * list of x,y coordinate pairs in the order by which moving entities traverse
+    // * them
+    // */
+    private List&lt;Pair&lt;Integer, Integer&gt;&gt; orderedPath;
+
+<span class="fc" id="L156">    private int shopCounter = 0;</span>
+<span class="fc" id="L157">    private int shopIncrement = 1;</span>
+
+    private int castleX;
+    private int castleY;
+
+    /**
+     * create the world (constructor)
+     * 
+     * @param width       width of world in number of cells
+     * @param height      height of world in number of cells
+     * @param orderedPath ordered list of x, y coordinate pairs representing
+     *                    position of path cells in world
+     */
+<span class="fc" id="L170">    public LoopManiaWorld(int width, int height, List&lt;Pair&lt;Integer, Integer&gt;&gt; orderedPath) {</span>
+<span class="fc" id="L171">        this.width = width;</span>
+<span class="fc" id="L172">        this.height = height;</span>
+<span class="fc" id="L173">        nonSpecifiedEntities = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L174">        character = null;</span>
+<span class="fc" id="L175">        enemies = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L176">        cardEntities = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L177">        unequippedInventoryItems = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L178">        equippedInventoryItems = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">        for (int i = 0; i &lt; equippedInventoryLength; i += 1) {</span>
+<span class="fc" id="L180">            equippedInventoryItems.add(null);</span>
+        }
+<span class="fc" id="L182">        numLoops = 0;</span>
+<span class="fc" id="L183">        this.orderedPath = orderedPath;</span>
+<span class="fc" id="L184">        buildingEntities = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L185">        goldEntities = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L186">        allRareItems = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L187">    }</span>
+
+    public List&lt;Pair&lt;Integer, Integer&gt;&gt; getOrderedPath() {
+<span class="fc" id="L190">        return orderedPath;</span>
+    }
+
+    public void increaseShopLoops() {
+<span class="fc" id="L194">        shopCounter += shopIncrement;</span>
+<span class="fc" id="L195">        shopIncrement += 1;</span>
+<span class="fc" id="L196">    }</span>
+
+    public int getWidth() {
+<span class="fc" id="L199">        return width;</span>
+    }
+
+    public int getHeight() {
+<span class="nc" id="L203">        return height;</span>
+    }
+
+    /**
+     * set the character. This is necessary because it is loaded as a special entity
+     * out of the file
+     * 
+     * @param character the character
+     */
+    public void setCharacter(Character character) {
+<span class="fc" id="L213">        this.character = character;</span>
+<span class="fc" id="L214">    }</span>
+
+    public Character getCharacter() {
+<span class="nc" id="L217">        return character;</span>
+    }
+
+    public Goals getWorldGoals() {
+<span class="nc" id="L221">        return worldGoals;</span>
+    }
+
+    public void setWorldGoals(Goals goal) {
+<span class="fc" id="L225">        worldGoals = goal;</span>
+<span class="fc" id="L226">    }</span>
+
+    public void incrementLoops() {
+<span class="fc" id="L229">        numLoops++;</span>
+<span class="fc" id="L230">        incrementLoopsProperty();</span>
+<span class="fc" id="L231">    }</span>
+
+    public List&lt;Building&gt; getBuildingEntities() {
+<span class="fc" id="L234">        return buildingEntities;</span>
+    }
+
+    public int getNumLoops() {
+<span class="fc" id="L238">        return numLoops;</span>
+    }
+
+    public List&lt;Enemy&gt; getEnemies() {
+<span class="fc" id="L242">        return enemies;</span>
+    }
+
+    /**
+     * add a generic entity (without it's own dedicated method for adding to the
+     * world)
+     * 
+     * @param entity
+     */
+    public void addEntity(Entity entity) {
+<span class="nc" id="L252">        nonSpecifiedEntities.add(entity);</span>
+<span class="nc" id="L253">    }</span>
+
+    /**
+     * spawns enemies if the conditions warrant it, adds to world. It currently
+     * spawns only slugs
+     * 
+     * @return list of the enemies to be displayed on screen
+     */
+
+    /**
+     * Thoughts: 1. Create possiblyGetEnemySpawnPosition() for all types of enemies
+     * e.g. possiblyGetSlugSpawnPosition() 2. Create
+     * possiblySpawnVampire(),possiblySpawnSlug(), possiblySpawnZombie(). All 3
+     * methods are called in the possibleSpawnEnemies. If condition moved into
+     * possibleSpawn_____() methods created. Each method returns an enemy that is
+     * added to the spawningEnemies list.
+     * 
+     * @return
+     */
+<span class="fc" id="L272">    private boolean zombieSpawned = false;</span>
+<span class="fc" id="L273">    private boolean vampireSpawned = false;</span>
+<span class="fc" id="L274">    private boolean specialEnemySpawned = false;</span>
+
+    public List&lt;Enemy&gt; possiblySpawnEnemies() {
+<span class="fc" id="L277">        int enemySelection = SLUG;</span>
+<span class="pc bpc" id="L278" title="2 of 8 branches missed.">        if (numLoops % 5 == 0 &amp;&amp; !checkVampireSpawned() &amp;&amp; numLoops == vampireRespawnLoop &amp;&amp; checkVampireBuilding()) {</span>
+<span class="fc" id="L279">            enemySelection = VAMPIRE;</span>
+<span class="fc" id="L280">            vampireRespawnLoop = numLoops + 5;</span>
+<span class="fc" id="L281">            vampireSpawned = true;</span>
+<span class="fc" id="L282">            specialEnemySpawned = true;</span>
+<span class="pc bpc" id="L283" title="2 of 6 branches missed.">        } else if (!checkZombieSpawned() &amp;&amp; numLoops == zombieRespawnLoop &amp;&amp; checkZombiePit()) {</span>
+<span class="fc" id="L284">            enemySelection = ZOMBIE;</span>
+<span class="fc" id="L285">            zombieRespawnLoop = numLoops + 1;</span>
+<span class="fc" id="L286">            zombieSpawned = true;</span>
+<span class="fc" id="L287">            specialEnemySpawned = true;</span>
+        }
+<span class="fc" id="L289">        List&lt;Pair&lt;Integer, Integer&gt;&gt; positions = possiblyGetEnemySpawnPosition(enemySelection);</span>
+<span class="fc" id="L290">        List&lt;Enemy&gt; spawningEnemies = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L291" title="All 2 branches covered.">        if (positions != null) {</span>
+<span class="fc bfc" id="L292" title="All 2 branches covered.">            for (Pair&lt;Integer, Integer&gt; pos : positions) {</span>
+<span class="fc" id="L293">                int indexInPath = orderedPath.indexOf(pos);</span>
+<span class="fc" id="L294">                PathPosition pathPosition = new PathPosition(indexInPath, orderedPath);</span>
+<span class="fc" id="L295">                EnemySelector enemySelector = new EnemySelector();</span>
+<span class="fc" id="L296">                Enemy enemy = enemySelector.getEnemy(enemySelection, pathPosition);</span>
+<span class="fc" id="L297">                enemies.add(enemy);</span>
+<span class="fc" id="L298">                spawningEnemies.add(enemy);</span>
+<span class="fc" id="L299">            }</span>
+        }
+<span class="fc" id="L301">        return spawningEnemies;</span>
+    }
+
+    /**
+     * Checks if vampire building is in the world
+     * @return  State if vampire building is in the world
+     */
+    public boolean checkVampireBuilding() {
+<span class="fc bfc" id="L309" title="All 2 branches covered.">        for (Building b : buildingEntities) {</span>
+<span class="fc bfc" id="L310" title="All 2 branches covered.">            if (b instanceof VampireCastle) {</span>
+<span class="fc" id="L311">                return true;</span>
+            }
+<span class="fc" id="L313">        }</span>
+<span class="fc" id="L314">        return false;</span>
+    }
+
+    /**
+     * Checks if zombie pit is in the world
+     * @return  State if zombie pit is in the world
+     */
+    public boolean checkZombiePit() {
+<span class="fc bfc" id="L322" title="All 2 branches covered.">        for (Building b : buildingEntities) {</span>
+<span class="fc bfc" id="L323" title="All 2 branches covered.">            if (b instanceof ZombiePit) {</span>
+<span class="fc" id="L324">                return true;</span>
+            }
+<span class="fc" id="L326">        }</span>
+<span class="fc" id="L327">        return false;</span>
+    }
+
+    /**
+     * Check if a vampire has spawned already. Only 1 spawn allowed per loop
+     * @return  State if a vampire is already in the world.
+     */
+    public boolean checkVampireSpawned() {
+<span class="fc bfc" id="L335" title="All 2 branches covered.">        for (Enemy e : enemies) {</span>
+<span class="fc bfc" id="L336" title="All 2 branches covered.">            if (e instanceof Vampire) {</span>
+<span class="fc" id="L337">                return true;</span>
+            }
+<span class="fc" id="L339">        }</span>
+<span class="fc" id="L340">        return false;</span>
+    }
+
+    /**
+     * Check if a zombie has spawned already. Only 1 spawn allowed per loop
+     * @return  State if a zombie is already in the world.
+     */
+    public boolean checkZombieSpawned() {
+<span class="fc bfc" id="L348" title="All 2 branches covered.">        for (Enemy e : enemies) {</span>
+<span class="fc bfc" id="L349" title="All 2 branches covered.">            if (e instanceof Zombie) {</span>
+<span class="fc" id="L350">                return true;</span>
+            }
+<span class="fc" id="L352">        }</span>
+<span class="fc" id="L353">        return false;</span>
+    }
+
+    /**
+     * Kill an enemy
+     * 
+     * @param enemy enemy to be killed
+     */
+    private void killEnemy(Enemy enemy) {
+<span class="fc" id="L362">        enemy.destroy();</span>
+<span class="fc" id="L363">        enemies.remove(enemy);</span>
+<span class="fc" id="L364">    }</span>
+
+    /**
+     * Determines behaviour for allied soldier. Soldier will keep fighting enemy unless turned into a zombie.
+     * @param soldier   Soldier fighting in battle
+     * @param enemy     Enemy fought by soldier
+     */
+    public void soldierEnemyBattle(AlliedSoldier soldier, Enemy enemy) {
+<span class="pc bpc" id="L372" title="1 of 2 branches missed.">        while (soldier.getHealth() &gt; 0) {</span>
+<span class="fc" id="L373">            System.out.println(&quot;Soldier and enemy battle&quot;);</span>
+<span class="fc" id="L374">            soldier.attack(enemy, equippedInventoryItems);</span>
+<span class="fc bfc" id="L375" title="All 2 branches covered.">            if (enemy.getHealth() == 0) {</span>
+<span class="fc" id="L376">                break;</span>
+            }
+<span class="pc bpc" id="L378" title="1 of 2 branches missed.">            if (enemy instanceof Zombie) {</span>
+<span class="fc" id="L379">                Zombie zombie = (Zombie) enemy;</span>
+<span class="fc" id="L380">                zombie.possiblyTurnSoldier(soldier);</span>
+            }
+
+<span class="pc bpc" id="L383" title="1 of 2 branches missed.">            if (soldier.getIsZombie()) {</span>
+                // soldier turned into a zombie, it can no longer battle
+<span class="nc" id="L385">                break;</span>
+            }
+<span class="fc" id="L387">            enemy.attack(soldier, equippedInventoryItems);</span>
+        }
+<span class="fc" id="L389">    }</span>
+
+    /**
+     * For the character and the enemy, play out the battle that will occur
+     * @param enemy             Enemy for which the character fights
+     * @param defeatedEnemies   List of enemies defeated already
+     */
+    public void characterEnemyBattle(MovingEntity enemy, List&lt;Enemy&gt; defeatedEnemies) {
+<span class="fc bfc" id="L397" title="All 2 branches covered.">        while (character.getHealth() &gt; 0) {</span>
+<span class="fc" id="L398">            System.out.println(&quot;Character attack: &quot; + character.getAttack());</span>
+<span class="fc" id="L399">            character.attack(enemy, equippedInventoryItems);</span>
+<span class="fc" id="L400">            System.out.println(&quot;Enemy health: &quot; + enemy.getHealth());</span>
+<span class="fc bfc" id="L401" title="All 2 branches covered.">            if (enemy.getHealth() == 0) {</span>
+<span class="fc" id="L402">                break;</span>
+            }
+<span class="fc" id="L404">            this.determineEnemyTrance(enemy);</span>
+            // an allied soldier can not be &quot;in-trance&quot;
+<span class="pc bpc" id="L406" title="3 of 4 branches missed.">            if (enemy.getInTrance() &amp;&amp; enemy instanceof Enemy) {</span>
+                // enemy in trance fights the supporting enemies
+<span class="nc" id="L408">                fightSupportingEnemies(defeatedEnemies, enemy);</span>
+<span class="nc bnc" id="L409" title="All 2 branches missed.">                if (enemy.getHealth() == 0) {</span>
+                    // if the enemy has died whilst in trance,
+                    // remove the enemy
+<span class="nc" id="L412">                    defeatedEnemies.add((Enemy) enemy);</span>
+<span class="nc" id="L413">                    return;</span>
+                }
+            }
+<span class="fc" id="L416">            enemy.attack(character, equippedInventoryItems);</span>
+<span class="fc" id="L417">            System.out.println(&quot;Enemy attack: &quot; + enemy.getAttack());</span>
+        }
+<span class="fc" id="L419">    }</span>
+
+    /**
+     * Determines if supporting enemies will join the fight
+     * @param defeatedEnemies   List of enemies defeated so far
+     * @param player            The character player in the world
+     */
+    public void fightSupportingEnemies(List&lt;Enemy&gt; defeatedEnemies, MovingEntity player) {
+<span class="fc" id="L427">        int numAttacks = 0;</span>
+<span class="fc bfc" id="L428" title="All 2 branches covered.">        for (Enemy enemy : enemies) {</span>
+            // 1. Check the supporting enemy is alive and is in range
+            // Note: The supporting enemy will never be the current enemy as either they
+            // would have died (or the character has died - game ended).
+            // Therefore, the if condition will fail.
+            // 2. Check the character is within the supporting enemy's supprorting radius
+<span class="pc bpc" id="L434" title="1 of 4 branches missed.">            if (enemy.getHealth() &gt; 0 &amp;&amp; this.isInSupportRange(enemy)) {</span>
+<span class="pc bpc" id="L435" title="1 of 2 branches missed.">                if (player instanceof Character) {</span>
+<span class="nc" id="L436">                    characterEnemyBattle(enemy, defeatedEnemies);</span>
+<span class="nc" id="L437">                    this.checkCharacterHealth();</span>
+                    // enemy has died, destroy the enemy and collect the rewards
+<span class="nc bnc" id="L439" title="All 2 branches missed.">                    if (enemy.getHealth() == 0) {</span>
+<span class="nc" id="L440">                        character.collectRewards(enemy);</span>
+<span class="nc" id="L441">                        defeatedEnemies.add(enemy);</span>
+                    }
+                } else { // enemy in trance
+<span class="pc bpc" id="L444" title="1 of 2 branches missed.">                    while (numAttacks &lt; player.getNumTranceAttacks()) {</span>
+<span class="nc" id="L445">                        player.attack(enemy, equippedInventoryItems);</span>
+<span class="nc bnc" id="L446" title="All 2 branches missed.">                        if (enemy.getHealth() == 0) {</span>
+                            // the enemy (not in trance) has died
+                            // break to iterate the enemies list and get the next supporting enemy
+<span class="nc" id="L449">                            break;</span>
+                        }
+<span class="nc" id="L451">                        enemy.attack(player, equippedInventoryItems);</span>
+<span class="nc bnc" id="L452" title="All 2 branches missed.">                        if (player.getHealth() == 0) {</span>
+                            // the enemy in trance has died
+<span class="nc" id="L454">                            return;</span>
+                        }
+<span class="nc" id="L456">                        numAttacks++;</span>
+                    }
+                    // the enemy has attacked for the character numAttacks time
+                    // it is now no longer in trance
+<span class="pc bpc" id="L460" title="1 of 2 branches missed.">                    if (numAttacks == player.getNumTranceAttacks()) {</span>
+<span class="fc" id="L461">                        return; // the enemy is no longer in trance</span>
+                    }
+                }
+            }
+<span class="fc" id="L465">        }</span>
+<span class="fc" id="L466">    }</span>
+
+    /**
+     * Checks if soldier can attack the enemy
+     * @param enemy             Enemy to defeat
+     * @param defeatedEnemies   List of enemies defeated already
+     */
+    public void soldierPossiblyAttacksEnemy(Enemy enemy, List&lt;Enemy&gt; defeatedEnemies) {
+        // allied soldier exists - fights the enemy first
+<span class="fc bfc" id="L475" title="All 2 branches covered.">        if (character.alliedSoldierExists()) {</span>
+<span class="fc" id="L476">            AlliedSoldier soldier = character.getAnAlliedSoldier();</span>
+            // allied soldier and enemy battle
+<span class="fc" id="L478">            soldierEnemyBattle(soldier, enemy);</span>
+
+<span class="pc bpc" id="L480" title="1 of 2 branches missed.">            if (soldier.getIsZombie()) {</span>
+                // allied soldier - turned zombie - battles the character
+<span class="nc" id="L482">                System.out.println(&quot;Allied soldier is a zombie!&quot;);</span>
+<span class="nc" id="L483">                characterEnemyBattle(soldier, defeatedEnemies);</span>
+<span class="nc" id="L484">                this.checkCharacterHealth();</span>
+            }
+
+            // soldier has died, it can no longer fight for the character
+<span class="pc bpc" id="L488" title="1 of 2 branches missed.">            if (soldier.getHealth() == 0) {</span>
+<span class="nc" id="L489">                character.removeSoldier(soldier);</span>
+<span class="nc" id="L490">                System.out.println(&quot;Allied soldier has died!&quot;);</span>
+            }
+        }
+<span class="fc" id="L493">    }</span>
+
+    /**
+     * Determine if the enemy will be transitioned into the trance stage
+     * 
+     * @param enemy
+     */
+    public void determineEnemyTrance(MovingEntity enemy) {
+<span class="fc" id="L501">        Item weapon1 = equippedInventoryItems.get(0);</span>
+<span class="fc" id="L502">        Item weapon2 = equippedInventoryItems.get(1);</span>
+<span class="pc bpc" id="L503" title="6 of 8 branches missed.">        if ((weapon1 != null &amp;&amp; weapon1 instanceof Staff) || (weapon2 != null &amp;&amp; weapon2 instanceof Staff)) {</span>
+<span class="nc" id="L504">            System.out.println(&quot;In trance&quot;);</span>
+<span class="nc" id="L505">            Random random = new Random();</span>
+<span class="nc" id="L506">            int tranceChance = random.nextInt(100);</span>
+<span class="nc" id="L507">            int tranceThreshold = random.nextInt(20);</span>
+            // the chance of a trance is random (as seen by the tranceThreshold)
+<span class="nc bnc" id="L509" title="All 2 branches missed.">            if (tranceChance &lt; tranceThreshold) {</span>
+<span class="nc" id="L510">                enemy.setInTrance(true);</span>
+                // set the number of attacks the enemy will undergo in trance
+<span class="nc" id="L512">                int numAttacks = random.nextInt(10);</span>
+<span class="nc" id="L513">                enemy.setNumTranceAttacks(numAttacks);</span>
+            }
+        }
+<span class="fc" id="L516">    }</span>
+
+    /**
+     * Checks if enemy is in battle radius
+     * @param enemy     Enemy to attack
+     * @return          State if enemy is within battle radius
+     */
+    public boolean isInBattleRange(Enemy enemy) {
+<span class="fc" id="L524">        return Math.pow((character.getX() - enemy.getX()), 2) + Math.pow((character.getY() - enemy.getY()), 2) &lt; enemy</span>
+<span class="pc bpc" id="L525" title="1 of 2 branches missed.">                .getBattleRadius();</span>
+    }
+
+    /**
+     * Checks if enemy is in support radius
+     * @param enemy     Enemy to attack
+     * @return          State if enemy is within support radius
+     */
+    public boolean isInSupportRange(Enemy enemy) {
+<span class="fc" id="L534">        return Math.pow((character.getX() - enemy.getX()), 2) + Math.pow((character.getY() - enemy.getY()), 2) &lt; enemy</span>
+<span class="pc bpc" id="L535" title="1 of 2 branches missed.">                .getSupportRadius();</span>
+    }
+
+    /**
+     * run the expected battles in the world, based on current world state
+     * 
+     * @return list of enemies which have been killed
+     */
+    public List&lt;Enemy&gt; runBattles() {
+<span class="fc" id="L544">        List&lt;Enemy&gt; defeatedEnemies = new ArrayList&lt;Enemy&gt;();</span>
+<span class="fc bfc" id="L545" title="All 2 branches covered.">        for (Enemy e : enemies) {</span>
+            // 1. check enemy's health as they may have died from supporting a previous
+            // enemy
+            // 2. check the character is in the enemy's battle radius
+<span class="pc bpc" id="L549" title="2 of 4 branches missed.">            if (e.getHealth() &gt; 0 &amp;&amp; this.isInBattleRange(e)) {</span>
+                // if an allied soldier exists, it fights the enemy first
+<span class="fc" id="L551">                this.soldierPossiblyAttacksEnemy(e, defeatedEnemies);</span>
+                // enemy and character battle
+<span class="fc" id="L553">                characterEnemyBattle(e, defeatedEnemies);</span>
+<span class="fc" id="L554">                this.checkCharacterHealth();</span>
+<span class="fc" id="L555">                character.collectRewards(e);</span>
+                // by this point, either the enemy died or the game ended (the character died)
+<span class="fc" id="L557">                defeatedEnemies.add(e);</span>
+
+                // character fights all the supporting enemies
+                // character that was in trance (and turned back to an enemy)
+                // will fight character again here
+<span class="fc" id="L562">                this.fightSupportingEnemies(defeatedEnemies, e);</span>
+            }
+<span class="fc" id="L564">        }</span>
+
+<span class="fc bfc" id="L566" title="All 2 branches covered.">        for (Enemy e : defeatedEnemies) {</span>
+<span class="fc" id="L567">            killEnemy(e);</span>
+<span class="fc" id="L568">        }</span>
+<span class="fc" id="L569">        return defeatedEnemies;</span>
+
+    }
+
+    /**
+     * Checks for current health of character and applies OneRing in case of death
+     */
+    public void checkCharacterHealth() {
+<span class="fc bfc" id="L577" title="All 2 branches covered.">        if (character.getHealth() == 0) {</span>
+<span class="fc bfc" id="L578" title="All 2 branches covered.">            if (checkTheOneRingInUnequippedItems()) {</span>
+<span class="pc bpc" id="L579" title="1 of 2 branches missed.">                for (Item i : unequippedInventoryItems) {</span>
+<span class="pc bpc" id="L580" title="1 of 2 branches missed.">                    if (i instanceof TheOneRing) {</span>
+<span class="fc" id="L581">                        removeUnequippedInventoryItem(i);</span>
+<span class="fc" id="L582">                        break;</span>
+                    }
+<span class="nc" id="L584">                }</span>
+<span class="fc" id="L585">                character.setHealth(100);</span>
+            } else {
+<span class="fc" id="L587">                triggerGameOver();</span>
+            }
+        }
+<span class="fc" id="L590">    }</span>
+
+    /**
+     * Trigger game over for LoopManiaWorldController to trigger game over screen
+     */
+    private void triggerGameOver() {
+        // signal to loop mania world controller to end the game
+<span class="fc" id="L597">        setGameOver(true);</span>
+<span class="fc" id="L598">    }</span>
+
+    /**
+     * Load a card into the character's card entities
+     * @param cardSelection     Specific card selection. Negative numbers will generate random cards
+     */
+    public void loadCard(int cardSelection) {
+<span class="fc bfc" id="L605" title="All 2 branches covered.">        if (cardEntities.size() &gt;= getWidth()) {</span>
+<span class="fc" id="L606">            Card card = cardEntities.get(0);</span>
+<span class="fc" id="L607">            card.removeCardAward(character);</span>
+<span class="fc" id="L608">            addUnequippedItem(-1);</span>
+<span class="fc" id="L609">            removeCard(0);</span>
+        }
+<span class="fc" id="L611">        Random randomCard = new Random();</span>
+<span class="fc" id="L612">        int randCard = cardSelection;</span>
+        // If card selection is &lt; 0, then we generate a random card
+<span class="fc bfc" id="L614" title="All 2 branches covered.">        if (cardSelection &lt; 0) {</span>
+<span class="fc" id="L615">            randCard = randomCard.nextInt(CARDRANDOMISER);</span>
+        } 
+<span class="fc" id="L617">        CardSelector cardSelector = new CardSelector();</span>
+<span class="fc" id="L618">        Card card = cardSelector.getCard(randCard, cardEntities.size());</span>
+<span class="fc bfc" id="L619" title="All 2 branches covered.">        if (card != null) {</span>
+<span class="fc" id="L620">            cardEntities.add(card);</span>
+        }
+<span class="fc" id="L622">    }</span>
+
+    /**
+     * Grabs a card depending on its location in the world
+     * @param cardNodeX     x coordinate of card
+     * @param cardNodeY     y coordinate of card
+     * @return              Card at said location
+     */
+    public Card getCard(int cardNodeX, int cardNodeY) {
+        // start by getting card
+<span class="fc" id="L632">        Card card = null;</span>
+<span class="fc bfc" id="L633" title="All 2 branches covered.">        for (Card c : cardEntities) {</span>
+<span class="pc bpc" id="L634" title="1 of 4 branches missed.">            if ((c.getX() == cardNodeX) &amp;&amp; (c.getY() == cardNodeY)) {</span>
+<span class="fc" id="L635">                card = c;</span>
+<span class="fc" id="L636">                break;</span>
+            }
+<span class="fc" id="L638">        }</span>
+<span class="fc" id="L639">        return card;</span>
+    }
+
+    /**
+     * Checks if One Ring is in inventory for unequipped items
+     * @return  State that One Ring is in unequipped items
+     */
+    public boolean checkTheOneRingInUnequippedItems() {
+<span class="fc" id="L647">        boolean state = false;</span>
+<span class="fc bfc" id="L648" title="All 2 branches covered.">        for (Item i : unequippedInventoryItems) {</span>
+<span class="pc bpc" id="L649" title="1 of 4 branches missed.">            if (i != null &amp;&amp; i instanceof TheOneRing) {</span>
+<span class="fc" id="L650">                return true;</span>
+            }
+<span class="fc" id="L652">        }</span>
+<span class="fc" id="L653">        return state;</span>
+    }
+
+    /**
+     * Adds unequipped items to unequippedItemSlots
+     * @param itemSelection     Specific item selection. If &lt; 0, will choose a random item
+     */
+    public void addUnequippedItem(int itemSelection) {
+<span class="fc" id="L661">        Pair&lt;Integer, Integer&gt; firstAvailableSlot = getFirstAvailableSlotForItem();</span>
+<span class="fc bfc" id="L662" title="All 2 branches covered.">        if (firstAvailableSlot == null) {</span>
+            // Give some reward for removing the card
+<span class="fc" id="L664">            removeItemByPositionInUnequippedInventoryItems(0);</span>
+<span class="fc" id="L665">            firstAvailableSlot = getFirstAvailableSlotForItem();</span>
+        }
+        int randItem;
+<span class="fc" id="L668">        ItemSelector itemSelector = new ItemSelector();</span>
+<span class="fc bfc" id="L669" title="All 2 branches covered.">        if (itemSelection &lt; 0) {</span>
+<span class="fc" id="L670">            Random randomItem = new Random();</span>
+<span class="fc" id="L671">            randItem = randomItem.nextInt(ITEMRANDOMISER);</span>
+<span class="fc" id="L672">        } else {</span>
+<span class="fc" id="L673">            randItem = itemSelection;</span>
+        }
+<span class="fc" id="L675">        Item item = itemSelector.getItem(randItem, allRareItems,</span>
+<span class="fc" id="L676">                new SimpleIntegerProperty(firstAvailableSlot.getValue0()),</span>
+<span class="fc" id="L677">                new SimpleIntegerProperty(firstAvailableSlot.getValue1()), checkTheOneRingInUnequippedItems());</span>
+<span class="fc bfc" id="L678" title="All 2 branches covered.">        if (item != null) {</span>
+<span class="fc" id="L679">            unequippedInventoryItems.add(item);</span>
+        }
+<span class="fc" id="L681">    }</span>
+
+    /**
+     * remove card at a particular index of cards (position in gridpane of unplayed
+     * cards)
+     * 
+     * @param index the index of the card, from 0 to length-1
+     */
+    private void removeCard(int index) {
+<span class="fc" id="L690">        Card c = cardEntities.get(index);</span>
+<span class="fc" id="L691">        int x = c.getX();</span>
+<span class="fc" id="L692">        c.destroy();</span>
+<span class="fc" id="L693">        cardEntities.remove(index);</span>
+<span class="fc" id="L694">        shiftCardsDownFromXCoordinate(x);</span>
+<span class="fc" id="L695">    }</span>
+
+    /**
+     * remove an item by x,y coordinates
+     * 
+     * @param x x coordinate from 0 to width-1
+     * @param y y coordinate from 0 to height-1
+     */
+    public void removeUnequippedInventoryItemByCoordinates(int x, int y) {
+<span class="fc" id="L704">        Item item = getUnequippedInventoryItemEntityByCoordinates(x, y);</span>
+<span class="fc" id="L705">        removeUnequippedInventoryItem(item);</span>
+<span class="fc" id="L706">    }</span>
+
+    /**
+     * Checks if item is in equipped inventory
+     * @param itemType  String for item type
+     * @return          State that item is in equipped inventory
+     */
+    public boolean checkItemInEquippedInventory(String itemType) {
+<span class="fc" id="L714">        boolean state = false;</span>
+<span class="fc bfc" id="L715" title="All 2 branches covered.">        for (Item i : equippedInventoryItems) {</span>
+<span class="pc bpc" id="L716" title="1 of 4 branches missed.">            if (i != null &amp;&amp; i.getType().equals(itemType)) {</span>
+<span class="nc" id="L717">                return true;</span>
+            }
+<span class="fc" id="L719">        }</span>
+<span class="fc" id="L720">        return state;</span>
+    }
+
+    /**
+     * Converts card into items by coordinates
+     * @param nodeX
+     * @param nodeY
+     * @param x
+     * @param y
+     * @return      Card retrieved based on coordinates on UI
+     */
+    public Item convertCardToItemByCoordinates(int nodeX, int nodeY, int x, int y) {
+<span class="fc" id="L732">        Item item = null;</span>
+<span class="pc bpc" id="L733" title="1 of 2 branches missed.">        for (Item i : unequippedInventoryItems) {</span>
+<span class="pc bpc" id="L734" title="1 of 4 branches missed.">            if ((i.getX() == nodeX) &amp;&amp; (i.getY() == nodeY)) {</span>
+<span class="fc" id="L735">                item = i;</span>
+<span class="fc" id="L736">                break;</span>
+            }
+<span class="fc" id="L738">        }</span>
+<span class="fc" id="L739">        System.out.println(item.getItemType());</span>
+<span class="pc bpc" id="L740" title="1 of 2 branches missed.">        if (item != null) {</span>
+<span class="pc bpc" id="L741" title="1 of 5 branches missed.">            switch (x) {</span>
+                case 0:
+<span class="pc bpc" id="L743" title="1 of 4 branches missed.">                    if (item.getItemType().equals(&quot;Weapon&quot;) &amp;&amp; !checkItemInEquippedInventory(item.getType())) {</span>
+<span class="fc" id="L744">                        equippedInventoryItems.set(x, item);</span>
+<span class="fc" id="L745">                        System.out.println(&quot;Weapon: &quot; + item.getType() + &quot; has been added&quot;);</span>
+                    } else {
+<span class="fc" id="L747">                        item = null;</span>
+                    }
+<span class="fc" id="L749">                    break;</span>
+                case 1:
+<span class="pc bpc" id="L751" title="1 of 4 branches missed.">                    if (item.getItemType().equals(&quot;Weapon&quot;) &amp;&amp; !checkItemInEquippedInventory(item.getType())) {</span>
+<span class="fc" id="L752">                        equippedInventoryItems.set(x, item);</span>
+<span class="fc" id="L753">                        System.out.println(&quot;Weapon: &quot; + item.getType() + &quot; has been added&quot;);</span>
+                    } else {
+<span class="fc" id="L755">                        item = null;</span>
+                    }
+<span class="fc" id="L757">                    break;</span>
+                case 2:
+<span class="pc bpc" id="L759" title="1 of 4 branches missed.">                    if (item.getItemType().equals(&quot;Equipment&quot;) &amp;&amp; !checkItemInEquippedInventory(item.getType())) {</span>
+<span class="fc" id="L760">                        equippedInventoryItems.set(x, item);</span>
+<span class="fc" id="L761">                        System.out.println(&quot;Equipment: &quot; + item.getType() + &quot; has been added&quot;);</span>
+                    } else {
+<span class="fc" id="L763">                        item = null;</span>
+                    }
+<span class="fc" id="L765">                    break;</span>
+                case 3:
+<span class="pc bpc" id="L767" title="1 of 4 branches missed.">                    if (item.getItemType().equals(&quot;Equipment&quot;) &amp;&amp; !checkItemInEquippedInventory(item.getType())) {</span>
+<span class="fc" id="L768">                        equippedInventoryItems.set(x, item);</span>
+<span class="fc" id="L769">                        System.out.println(&quot;Equipment: &quot; + item.getType() + &quot; has been added&quot;);</span>
+                    } else {
+<span class="fc" id="L771">                        item = null;</span>
+                    }
+                    break;
+            }
+
+        }
+<span class="fc" id="L777">        return item;</span>
+    }
+
+    /**
+     * run moves which occur with every tick without needing to spawn anything
+     * immediately
+     */
+    public void runTickMoves() {
+<span class="fc" id="L785">        this.updateCharacterBuff();</span>
+<span class="fc" id="L786">        character.updateStatistics(equippedInventoryItems);</span>
+<span class="fc" id="L787">        character.move();</span>
+<span class="fc" id="L788">        moveEnemies();</span>
+<span class="fc" id="L789">        detectCharacterisOnTile();</span>
+<span class="fc" id="L790">        detectEnemyisOnTile();</span>
+<span class="fc" id="L791">        detectEnemyInRadius();</span>
+        // Everytime the character moves, check if the character has acheieved the world
+        // goals
+<span class="pc bpc" id="L794" title="1 of 2 branches missed.">        if (worldGoals.checkGoalsMet(character.getStats(), numLoops)) {</span>
+<span class="nc" id="L795">            setGameWon(true);</span>
+        }
+<span class="fc" id="L797">    }</span>
+
+    /**
+     * Checks for character buffs depending on location
+     */
+    public void updateCharacterBuff() {
+<span class="fc bfc" id="L803" title="All 2 branches covered.">        for (Building b : buildingEntities) {</span>
+<span class="fc bfc" id="L804" title="All 2 branches covered.">            if (b instanceof Campfire) {</span>
+<span class="fc bfc" id="L805" title="All 2 branches covered.">                if (Math.pow((character.getX() - b.getX()), 2) + Math.pow((character.getY() - b.getY()), 2) &lt; 4) {</span>
+<span class="fc" id="L806">                    character.setIsBuffed(true);</span>
+<span class="fc" id="L807">                    return;</span>
+                }
+            }
+<span class="fc" id="L810">        }</span>
+<span class="fc" id="L811">        character.setIsBuffed(false);</span>
+<span class="fc" id="L812">    }</span>
+
+    /**
+     * loop through all buildings and gold entities and see if Character is onTile
+     */
+    public void detectCharacterisOnTile() {
+<span class="fc" id="L818">        List&lt;Gold&gt; destroyedGoldEntities = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L819" title="All 2 branches covered.">        for (Building b : buildingEntities) {</span>
+            // if building X coordinate == character X coordinate &amp;&amp;
+            // building Y coordinate == character Y coordinate
+<span class="fc bfc" id="L822" title="All 4 branches covered.">            if ((b.getX() == character.getX()) &amp;&amp; (b.getY() == character.getY())) {</span>
+<span class="fc" id="L823">                b.performActionOnCharacter(this.character);</span>
+
+<span class="fc bfc" id="L825" title="All 2 branches covered.">                if (b instanceof HerosCastle) {</span>
+<span class="pc bpc" id="L826" title="1 of 4 branches missed.">                    if (!zombieSpawned &amp;&amp; numLoops != 0) {</span>
+<span class="fc" id="L827">                        zombieRespawnLoop += 1;</span>
+                    }
+
+<span class="fc bfc" id="L830" title="All 6 branches covered.">                    if (!vampireSpawned &amp;&amp; numLoops % 5 == 0 &amp;&amp; numLoops != 0) {</span>
+<span class="fc" id="L831">                        vampireRespawnLoop += 5;</span>
+                    }
+                    // Check if shop is opened
+<span class="fc bfc" id="L834" title="All 2 branches covered.">                    if (numLoops == shopCounter) {</span>
+<span class="fc" id="L835">                        System.out.println(&quot;Shop is opened&quot;);</span>
+<span class="fc" id="L836">                        increaseShopLoops();</span>
+<span class="fc" id="L837">                        setInShop(true);</span>
+                    }
+<span class="fc" id="L839">                    incrementLoops();</span>
+                }
+            }
+<span class="fc" id="L842">        }</span>
+<span class="pc bpc" id="L843" title="1 of 2 branches missed.">        for (Gold g : goldEntities) {</span>
+<span class="nc bnc" id="L844" title="All 4 branches missed.">            if (g.getX() == (character.getX()) &amp;&amp; g.getY() == (character.getY())) {</span>
+<span class="nc" id="L845">                Statistics stats = character.getStats();</span>
+<span class="nc" id="L846">                stats.setGold(stats.getGold() + g.getGold());</span>
+<span class="nc" id="L847">                System.out.println(&quot;Character's new gold: &quot; + stats.getGold());</span>
+<span class="nc" id="L848">                destroyedGoldEntities.add(g);</span>
+            }
+<span class="nc" id="L850">        }</span>
+
+<span class="pc bpc" id="L852" title="1 of 2 branches missed.">        for (Gold g : destroyedGoldEntities) {</span>
+<span class="nc" id="L853">            destroyGold(g);</span>
+<span class="nc" id="L854">        }</span>
+<span class="fc" id="L855">    }</span>
+
+    /**
+     * Loop through all buildings and see if Enemy is onTile
+     */
+    public void detectEnemyisOnTile() {
+
+<span class="fc" id="L862">        ArrayList&lt;Building&gt; destroyedBuildings = new ArrayList&lt;Building&gt;();</span>
+<span class="fc" id="L863">        List&lt;Enemy&gt; defeatedEnemies = new ArrayList&lt;Enemy&gt;();</span>
+
+<span class="fc bfc" id="L865" title="All 2 branches covered.">        for (Building b : buildingEntities) {</span>
+<span class="fc bfc" id="L866" title="All 2 branches covered.">            for (Enemy e : enemies) {</span>
+<span class="fc bfc" id="L867" title="All 6 branches covered.">                if (b.getX() == (e.getX()) &amp;&amp; b.getY() == (e.getY()) &amp;&amp; b instanceof Trap) {</span>
+<span class="fc" id="L868">                    boolean enemyKilledByTrap = b.performActionOnEnemy(e);</span>
+<span class="fc" id="L869">                    destroyedBuildings.add(b);</span>
+
+<span class="pc bpc" id="L871" title="1 of 2 branches missed.">                    if (enemyKilledByTrap) {</span>
+<span class="fc" id="L872">                        defeatedEnemies.add(e);</span>
+                    }
+                }
+<span class="fc" id="L875">            }</span>
+<span class="fc" id="L876">        }</span>
+
+<span class="fc bfc" id="L878" title="All 2 branches covered.">        for (Building b : destroyedBuildings) {</span>
+<span class="fc" id="L879">            destroyBuilding(b);</span>
+<span class="fc" id="L880">        }</span>
+<span class="fc bfc" id="L881" title="All 2 branches covered.">        for (Enemy e : defeatedEnemies) {</span>
+<span class="fc" id="L882">            killEnemy(e);</span>
+<span class="fc" id="L883">        }</span>
+<span class="fc" id="L884">    }</span>
+
+    /**
+     * Destroys gold from the world
+     * @param gold 
+     */
+    public void destroyGold(Gold gold) {
+<span class="nc" id="L891">        gold.destroy();</span>
+<span class="nc" id="L892">        goldEntities.remove(gold);</span>
+<span class="nc" id="L893">    }</span>
+
+    /**
+     * Detects if enemy is within radius of the buildings in the world
+     */
+    public void detectEnemyInRadius() {
+
+<span class="fc" id="L900">        ArrayList&lt;Enemy&gt; enemiesInRange = new ArrayList&lt;Enemy&gt;();</span>
+<span class="fc" id="L901">        ArrayList&lt;Enemy&gt; killedEnemies = new ArrayList&lt;Enemy&gt;();</span>
+
+<span class="fc" id="L903">        ArrayList&lt;Building&gt; campfires = new ArrayList&lt;Building&gt;();</span>
+
+<span class="fc bfc" id="L905" title="All 2 branches covered.">        for (Building b : buildingEntities) {</span>
+
+<span class="fc bfc" id="L907" title="All 2 branches covered.">            if (b instanceof Campfire) {</span>
+<span class="fc" id="L908">                campfires.add(b);</span>
+            }
+
+<span class="fc bfc" id="L911" title="All 2 branches covered.">            for (Enemy e : enemies) {</span>
+
+                // TOWER
+                // Pythagoras calculation to see if enemy in range.
+<span class="fc bfc" id="L915" title="All 2 branches covered.">                if (b instanceof Tower &amp;&amp; Math.pow((b.getX() - e.getX()), 2) + Math.pow((b.getY() - e.getY()), 2) &lt; e</span>
+<span class="fc bfc" id="L916" title="All 2 branches covered.">                        .getBattleRadius()) {</span>
+
+<span class="fc" id="L918">                    enemiesInRange.add(e);</span>
+
+<span class="fc" id="L920">                    boolean enemyKilledByTower = b.performActionOnEnemy(e);</span>
+
+<span class="fc bfc" id="L922" title="All 2 branches covered.">                    if (enemyKilledByTower) {</span>
+<span class="fc" id="L923">                        killedEnemies.add(e);</span>
+                    }
+                }
+
+                // Campfire
+<span class="fc bfc" id="L928" title="All 4 branches covered.">                if (b instanceof Campfire &amp;&amp; e.getType().equals(&quot;Vampire&quot;) &amp;&amp; Math.pow((b.getX() - e.getX()), 2)</span>
+<span class="fc bfc" id="L929" title="All 2 branches covered.">                        + Math.pow((b.getY() - e.getY()), 2) &lt; e.getBattleRadius()) {</span>
+<span class="fc" id="L930">                    e.reverseDirection();</span>
+                }
+<span class="fc" id="L932">            }</span>
+<span class="fc" id="L933">        }</span>
+
+        // Loop through enemies killed by tower and
+<span class="fc bfc" id="L936" title="All 2 branches covered.">        for (Enemy e : killedEnemies) {</span>
+<span class="fc" id="L937">            killEnemy(e);</span>
+<span class="fc" id="L938">        }</span>
+<span class="fc" id="L939">    }</span>
+
+    /**
+     * Destroys building from world
+     * @param building
+     */
+    private void destroyBuilding(Building building) {
+<span class="fc" id="L946">        building.destroy();</span>
+<span class="fc" id="L947">        buildingEntities.remove(building);</span>
+<span class="fc" id="L948">    }</span>
+
+    /**
+     * remove an item from the unequipped inventory
+     * 
+     * @param item item to be removed
+     */
+    public void removeUnequippedInventoryItem(Entity item) {
+<span class="fc" id="L956">        item.destroy();</span>
+<span class="fc" id="L957">        unequippedInventoryItems.remove(item);</span>
+<span class="fc" id="L958">    }</span>
+
+    /**
+     * return an unequipped inventory item by x and y coordinates assumes that no 2
+     * unequipped inventory items share x and y coordinates
+     * 
+     * @param x x index from 0 to width-1
+     * @param y y index from 0 to height-1
+     * @return unequipped inventory item at the input position
+     */
+    private Item getUnequippedInventoryItemEntityByCoordinates(int x, int y) {
+<span class="fc bfc" id="L969" title="All 2 branches covered.">        for (Item i : unequippedInventoryItems) {</span>
+<span class="fc bfc" id="L970" title="All 4 branches covered.">            if ((i.getX() == x) &amp;&amp; (i.getY() == y)) {</span>
+<span class="fc" id="L971">                return i;</span>
+            }
+<span class="fc" id="L973">        }</span>
+<span class="fc" id="L974">        return null;</span>
+    }
+
+    /**
+     * remove item at a particular index in the unequipped inventory items list
+     * (this is ordered based on age in the starter code)
+     * 
+     * @param index index from 0 to length-1
+     */
+    private void removeItemByPositionInUnequippedInventoryItems(int index) {
+<span class="fc" id="L984">        Entity item = unequippedInventoryItems.get(index);</span>
+<span class="fc" id="L985">        item.destroy();</span>
+<span class="fc" id="L986">        unequippedInventoryItems.remove(index);</span>
+<span class="fc" id="L987">    }</span>
+
+    /**
+     * get the first pair of x,y coordinates which don't have any items in it in the
+     * unequipped inventory
+     * 
+     * @return x,y coordinate pair
+     */
+    private Pair&lt;Integer, Integer&gt; getFirstAvailableSlotForItem() {
+        // first available slot for an item...
+        // IMPORTANT - have to check by y then x, since trying to find first available
+        // slot defined by looking row by row
+<span class="fc bfc" id="L999" title="All 2 branches covered.">        for (int y = 0; y &lt; unequippedInventoryHeight; y++) {</span>
+<span class="fc bfc" id="L1000" title="All 2 branches covered.">            for (int x = 0; x &lt; unequippedInventoryWidth; x++) {</span>
+<span class="fc bfc" id="L1001" title="All 2 branches covered.">                if (getUnequippedInventoryItemEntityByCoordinates(x, y) == null) {</span>
+<span class="fc" id="L1002">                    return new Pair&lt;Integer, Integer&gt;(x, y);</span>
+                }
+            }
+        }
+<span class="fc" id="L1006">        return null;</span>
+    }
+
+    /**
+     * shift card coordinates down starting from x coordinate
+     * 
+     * @param x x coordinate which can range from 0 to width-1
+     */
+    private void shiftCardsDownFromXCoordinate(int x) {
+<span class="fc bfc" id="L1015" title="All 2 branches covered.">        for (Card c : cardEntities) {</span>
+<span class="pc bpc" id="L1016" title="1 of 2 branches missed.">            if (c.getX() &gt;= x) {</span>
+<span class="fc" id="L1017">                c.x().set(c.getX() - 1);</span>
+            }
+<span class="fc" id="L1019">        }</span>
+<span class="fc" id="L1020">    }</span>
+
+    /**
+     * move all enemies
+     */
+    private void moveEnemies() {
+<span class="fc bfc" id="L1026" title="All 2 branches covered.">        for (Enemy e : enemies) {</span>
+<span class="fc" id="L1027">            e.move();</span>
+<span class="fc" id="L1028">        }</span>
+<span class="fc" id="L1029">    }</span>
+
+    /**
+     * get a randomly generated position which could be used to spawn an enemy
+     * 
+     * @return null if random choice is that wont be spawning an enemy or it isn't
+     *         possible, or random coordinate pair if should go ahead
+     */
+    private List&lt;Pair&lt;Integer, Integer&gt;&gt; possiblyGetEnemySpawnPosition(int enemySelection) {
+<span class="fc" id="L1038">        Random rand = new Random();</span>
+<span class="fc" id="L1039">        int choice = rand.nextInt(2);</span>
+        // spawn 4 enemies
+<span class="fc bfc" id="L1041" title="All 2 branches covered.">        if (specialEnemySpawned) {</span>
+<span class="fc" id="L1042">            choice = 0;</span>
+        }
+<span class="fc" id="L1044">        List&lt;Pair&lt;Integer, Integer&gt;&gt; spawnPositions = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L1045" title="3 of 6 branches missed.">        if ((choice == 0) &amp;&amp; ((enemies.size() &lt; 4) || specialEnemySpawned)) {</span>
+<span class="fc bfc" id="L1046" title="All 2 branches covered.">            if (specialEnemySpawned) {</span>
+<span class="fc" id="L1047">                specialEnemySpawned = false;</span>
+            }
+<span class="fc" id="L1049">            Pair&lt;Integer, Integer&gt; spawnPosition = null;</span>
+<span class="fc bfc" id="L1050" title="All 2 branches covered.">            if (enemySelection == 0) {</span>
+<span class="fc" id="L1051">                List&lt;Pair&lt;Integer, Integer&gt;&gt; orderedPathSpawnCandidates = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L1052">                int indexPosition = orderedPath.indexOf(new Pair&lt;Integer, Integer&gt;(character.getX(), character.getY()));</span>
+                // inclusive start and exclusive end of range of positions not allowed
+<span class="fc" id="L1054">                int startNotAllowed = (indexPosition - 2 + orderedPath.size()) % orderedPath.size();</span>
+<span class="fc" id="L1055">                int endNotAllowed = (indexPosition + 3) % orderedPath.size();</span>
+                // note terminating condition has to be != rather than &lt; since wrap around...
+<span class="fc bfc" id="L1057" title="All 2 branches covered.">                for (int i = endNotAllowed; i != startNotAllowed; i = (i + 1) % orderedPath.size()) {</span>
+<span class="fc" id="L1058">                    orderedPathSpawnCandidates.add(orderedPath.get(i));</span>
+                }
+
+                // choose random choice
+<span class="fc" id="L1062">                spawnPosition = orderedPathSpawnCandidates.get(rand.nextInt(orderedPathSpawnCandidates.size()));</span>
+<span class="fc" id="L1063">                goldPosition = orderedPathSpawnCandidates.get(rand.nextInt(orderedPathSpawnCandidates.size()));</span>
+<span class="fc" id="L1064">                spawnPositions.add(spawnPosition);</span>
+            }
+<span class="fc bfc" id="L1066" title="All 2 branches covered.">            if (enemySelection == 1) {</span>
+<span class="fc" id="L1067">                spawnPositions = getZombieSpawn();</span>
+            }
+
+<span class="fc bfc" id="L1070" title="All 2 branches covered.">            if (enemySelection == 2) {</span>
+<span class="fc" id="L1071">                spawnPositions = getVampireSpawn();</span>
+            }
+<span class="fc" id="L1073">            return spawnPositions;</span>
+        }
+<span class="fc" id="L1075">        return null;</span>
+    }
+
+    /**
+     * Gets the zombie spawn location
+     * @return  Coordinates for zombie spawn
+     */
+    public List&lt;Pair&lt;Integer, Integer&gt;&gt; getZombieSpawn() {
+<span class="fc" id="L1083">        List&lt;Pair&lt;Integer, Integer&gt;&gt; zombieSpawns = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L1084">        List&lt;Pair&lt;Integer, Integer&gt;&gt; allZombieBuildings = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L1085" title="All 2 branches covered.">        for (Building b : buildingEntities) {</span>
+<span class="fc bfc" id="L1086" title="All 2 branches covered.">            if (b instanceof ZombiePit) {</span>
+<span class="fc" id="L1087">                allZombieBuildings.add(new Pair&lt;Integer, Integer&gt;(b.getX(), b.getY()));</span>
+            }
+<span class="fc" id="L1089">        }</span>
+<span class="fc bfc" id="L1090" title="All 2 branches covered.">        for (Pair&lt;Integer, Integer&gt; building : allZombieBuildings) {</span>
+<span class="pc bpc" id="L1091" title="1 of 2 branches missed.">            for (int i = 0; i &lt; orderedPath.size(); i++) {</span>
+<span class="fc" id="L1092">                Pair&lt;Integer, Integer&gt; cell = orderedPath.get(i);</span>
+<span class="pc bpc" id="L1093" title="1 of 4 branches missed.">                if ((cell.getValue0() == building.getValue0() + 1 &amp;&amp; cell.getValue1() == building.getValue1())</span>
+<span class="pc bpc" id="L1094" title="1 of 4 branches missed.">                        || (cell.getValue0() == building.getValue0() - 1 &amp;&amp; cell.getValue1() == building.getValue1())</span>
+<span class="pc bpc" id="L1095" title="1 of 4 branches missed.">                        || (cell.getValue0() == building.getValue0() &amp;&amp; cell.getValue1() == building.getValue1() + 1)</span>
+<span class="fc bfc" id="L1096" title="All 4 branches covered.">                        || (cell.getValue0() == building.getValue0() &amp;&amp; cell.getValue1() == building.getValue1() - 1)) {</span>
+<span class="fc" id="L1097">                    zombieSpawns.add(cell);</span>
+<span class="fc" id="L1098">                    break;</span>
+                }
+            }
+<span class="fc" id="L1101">        }</span>
+<span class="fc" id="L1102">        return zombieSpawns;</span>
+    }
+
+    /**
+     * Gets the vampire spawn location
+     * @return  Coordinates for vampire spawn
+     */
+    public List&lt;Pair&lt;Integer, Integer&gt;&gt; getVampireSpawn() {
+<span class="fc" id="L1110">        List&lt;Pair&lt;Integer, Integer&gt;&gt; vampireSpawns = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L1111">        List&lt;Pair&lt;Integer, Integer&gt;&gt; allVampireBuildings = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L1112" title="All 2 branches covered.">        for (Building b : buildingEntities) {</span>
+<span class="fc bfc" id="L1113" title="All 2 branches covered.">            if (b instanceof VampireCastle) {</span>
+<span class="fc" id="L1114">                allVampireBuildings.add(new Pair&lt;Integer, Integer&gt;(b.getX(), b.getY()));</span>
+<span class="fc" id="L1115">                System.out.println(&quot;Vampire pit building at (&quot; + b.getX() + &quot;,&quot; + b.getY() + &quot;)&quot;);</span>
+            }
+<span class="fc" id="L1117">        }</span>
+<span class="fc bfc" id="L1118" title="All 2 branches covered.">        for (Pair&lt;Integer, Integer&gt; building : allVampireBuildings) {</span>
+<span class="pc bpc" id="L1119" title="1 of 2 branches missed.">            for (int i = 0; i &lt; orderedPath.size(); i++) {</span>
+<span class="fc" id="L1120">                Pair&lt;Integer, Integer&gt; cell = orderedPath.get(i);</span>
+<span class="pc bpc" id="L1121" title="3 of 4 branches missed.">                if ((cell.getValue0() == building.getValue0() + 1 &amp;&amp; cell.getValue1() == building.getValue1())</span>
+<span class="pc bpc" id="L1122" title="1 of 4 branches missed.">                        || (cell.getValue0() == building.getValue0() - 1 &amp;&amp; cell.getValue1() == building.getValue1())</span>
+<span class="pc bpc" id="L1123" title="1 of 4 branches missed.">                        || (cell.getValue0() == building.getValue0() &amp;&amp; cell.getValue1() == building.getValue1() + 1)</span>
+<span class="pc bpc" id="L1124" title="1 of 4 branches missed.">                        || (cell.getValue0() == building.getValue0() &amp;&amp; cell.getValue1() == building.getValue1() - 1)) {</span>
+<span class="fc" id="L1125">                    System.out.println(&quot;Vampire spawned at (&quot; + cell.getValue0() + &quot;,&quot; + cell.getValue1() + &quot;)&quot;);</span>
+<span class="fc" id="L1126">                    vampireSpawns.add(cell);</span>
+<span class="fc" id="L1127">                    break;</span>
+                }
+            }
+<span class="fc" id="L1130">        }</span>
+<span class="fc" id="L1131">        return vampireSpawns;</span>
+    }
+
+    /**
+     * remove a card by its x, y coordinates
+     * 
+     * @param cardNodeX     x index from 0 to width-1 of card to be removed
+     * @param cardNodeY     y index from 0 to height-1 of card to be removed
+     * @param buildingNodeX x index from 0 to width-1 of building to be added
+     * @param buildingNodeY y index from 0 to height-1 of building to be added
+     */
+    public Building convertCardToBuildingByCoordinates(int cardNodeX, int cardNodeY, int buildingNodeX,
+            int buildingNodeY) {
+        // start by getting card
+<span class="fc" id="L1145">        Card card = null;</span>
+<span class="pc bpc" id="L1146" title="1 of 2 branches missed.">        for (Card c : cardEntities) {</span>
+<span class="pc bpc" id="L1147" title="2 of 4 branches missed.">            if ((c.getX() == cardNodeX) &amp;&amp; (c.getY() == cardNodeY)) {</span>
+<span class="fc" id="L1148">                card = c;</span>
+<span class="fc" id="L1149">                break;</span>
+            }
+<span class="nc" id="L1151">        }</span>
+<span class="fc" id="L1152">        Building building = null;</span>
+<span class="fc" id="L1153">        BuildingSelector buildingSelector = new BuildingSelector();</span>
+<span class="fc" id="L1154">        building = buildingSelector.getBuilding(card.getCardType(), new SimpleIntegerProperty(buildingNodeX),</span>
+<span class="fc" id="L1155">                new SimpleIntegerProperty(buildingNodeY), checkBuildingOnPath(buildingNodeX, buildingNodeY),</span>
+<span class="fc" id="L1156">                checkBuildingNextToPath(buildingNodeX, buildingNodeY));</span>
+<span class="fc bfc" id="L1157" title="All 2 branches covered.">        if (building != null) {</span>
+<span class="fc" id="L1158">            buildingEntities.add(building);</span>
+<span class="fc" id="L1159">            card.destroy();</span>
+<span class="fc" id="L1160">            cardEntities.remove(card);</span>
+<span class="fc" id="L1161">            shiftCardsDownFromXCoordinate(cardNodeX);</span>
+        }
+<span class="fc" id="L1163">        return building;</span>
+
+    }
+
+    /**
+     * Checks if building is on path based on coordinates
+     * @param x
+     * @param y
+     * @return  state if building is on path
+     */
+    public boolean checkBuildingOnPath(int x, int y) {
+<span class="fc bfc" id="L1174" title="All 2 branches covered.">        for (int i = 0; i &lt; orderedPath.size(); i++) {</span>
+<span class="fc" id="L1175">            Pair&lt;Integer, Integer&gt; cell = orderedPath.get(i);</span>
+<span class="fc bfc" id="L1176" title="All 4 branches covered.">            if (cell.getValue0() == x &amp;&amp; cell.getValue1() == y) {</span>
+<span class="fc" id="L1177">                return true;</span>
+            }
+        }
+<span class="fc" id="L1180">        return false;</span>
+    }
+
+    /**
+     * Checks if building is next to path based on coordinates
+     * @param x
+     * @param y
+     * @return  state if building is next to path
+     */
+    public boolean checkBuildingNextToPath(int x, int y) {
+<span class="pc bpc" id="L1190" title="1 of 2 branches missed.">        for (int i = 0; i &lt; orderedPath.size(); i++) {</span>
+<span class="fc" id="L1191">            Pair&lt;Integer, Integer&gt; cell = orderedPath.get(i);</span>
+<span class="fc bfc" id="L1192" title="All 4 branches covered.">            if ((cell.getValue0() == x + 1 &amp;&amp; cell.getValue1() == y)</span>
+<span class="fc bfc" id="L1193" title="All 4 branches covered.">                    || (cell.getValue0() == x - 1 &amp;&amp; cell.getValue1() == y)</span>
+<span class="fc bfc" id="L1194" title="All 4 branches covered.">                    || (cell.getValue0() == x &amp;&amp; cell.getValue1() == y + 1)</span>
+<span class="fc bfc" id="L1195" title="All 4 branches covered.">                    || (cell.getValue0() == x &amp;&amp; cell.getValue1() == y - 1)) {</span>
+<span class="fc" id="L1196">                return true;</span>
+            }
+        }
+<span class="nc" id="L1199">        return false;</span>
+    }
+
+    /**
+     * Sets all rare items that can be spawned in the world
+     * @param jsonRareItems     JSONArray passed from JSON files
+     */
+    public void setRareItems(JSONArray jsonRareItems) {
+<span class="fc bfc" id="L1207" title="All 2 branches covered.">        for (int i = 0; i &lt; jsonRareItems.length(); i++) {</span>
+<span class="fc" id="L1208">            allRareItems.add(jsonRareItems.getString(i));</span>
+        }
+<span class="fc" id="L1210">    }</span>
+
+    public void setCastleCoordinates(int x, int y) {
+<span class="nc" id="L1213">        castleX = x;</span>
+<span class="nc" id="L1214">        castleY = y;</span>
+<span class="nc" id="L1215">    }</span>
+
+    public int getCastleX() {
+<span class="nc" id="L1218">        return castleX;</span>
+    }
+
+    public int getCastleY() {
+<span class="nc" id="L1222">        return castleY;</span>
+    }
+
+    /**
+     * Create gold randomly to spawn in world
+     * @return  Gold object
+     */
+    public Gold possiblySpawnGold() {
+<span class="fc" id="L1230">        Random randSpawn = new Random();</span>
+<span class="fc" id="L1231">        int goldSpawn = randSpawn.nextInt(GOLDRANDOMISER);</span>
+<span class="pc bpc" id="L1232" title="3 of 4 branches missed.">        if (goldPosition != null &amp;&amp; goldSpawn == 0) {</span>
+<span class="nc" id="L1233">            int indexInPath = orderedPath.indexOf(goldPosition);</span>
+<span class="nc" id="L1234">            PathPosition pathPosition = new PathPosition(indexInPath, orderedPath);</span>
+<span class="nc" id="L1235">            Statistics stats = new Statistics(0, 0, 0, 0, 100);</span>
+<span class="nc" id="L1236">            Gold gold = new Gold(pathPosition, stats);</span>
+<span class="nc" id="L1237">            goldEntities.add(gold);</span>
+<span class="nc" id="L1238">            return gold;</span>
+        }
+<span class="fc" id="L1240">        return null;</span>
+    }
+
+    public void addEnemy(Enemy enemy) {
+<span class="fc" id="L1244">        enemies.add(enemy);</span>
+<span class="fc" id="L1245">    }</span>
+
+    public void addBuilding(Building building) {
+<span class="fc" id="L1248">        buildingEntities.add(building);</span>
+<span class="fc" id="L1249">    }</span>
+
+    /**
+     * Get item based on coordinates
+     * @param x
+     * @param y
+     * @return  Returns item from said coordinates
+     */
+    public Item getItem(int x, int y) {
+<span class="fc" id="L1258">        Item item = null;</span>
+<span class="fc bfc" id="L1259" title="All 2 branches covered.">        for (Item i : unequippedInventoryItems) {</span>
+<span class="fc bfc" id="L1260" title="All 4 branches covered.">            if ((i.getX() == x) &amp;&amp; (i.getY() == y)) {</span>
+<span class="fc" id="L1261">                item = i;</span>
+<span class="fc" id="L1262">                break;</span>
+            }
+<span class="fc" id="L1264">        }</span>
+<span class="fc" id="L1265">        return item;</span>
+    }
+
+    /**
+     * Use a potion to heal the character
+     * @param item  Potion used to heal character
+     */
+    public void usePotion(Item item) {
+<span class="fc" id="L1273">        unequippedInventoryItems.remove(item);</span>
+<span class="fc" id="L1274">        item.destroy();</span>
+<span class="fc" id="L1275">        Statistics stats = character.getStats();</span>
+<span class="fc" id="L1276">        int characterHealth = stats.getHealth();</span>
+<span class="fc" id="L1277">        stats.setHealth(characterHealth + 20);</span>
+<span class="fc" id="L1278">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Statistics.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">21T2-cs2511-project</a> &gt; <a href="index.source.html" class="el_package">unsw.loopmania</a> &gt; <span class="el_source">Statistics.java</span></div><h1>Statistics.java</h1><pre class="source lang-java linenums">package unsw.loopmania;
+
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+
+/**
+ * Statistics for each entity
+ */
+public class Statistics {
+    /**
+     * attributes for Statistics
+     */
+    private int health;
+    private int attack;
+    private int defense;
+    private int exp;
+    private int gold;
+<span class="pc" id="L18">    private SimpleIntegerProperty healthValue = new SimpleIntegerProperty(this, &quot;healthValue&quot;);</span>
+<span class="pc" id="L19">    private SimpleIntegerProperty goldValue = new SimpleIntegerProperty(this, &quot;goldValue&quot;);</span>
+<span class="pc" id="L20">    private SimpleIntegerProperty expValue = new SimpleIntegerProperty(this, &quot;expValue&quot;);</span>
+<span class="pc" id="L21">    private SimpleIntegerProperty attackValue = new SimpleIntegerProperty(this, &quot;attackValue&quot;);</span>
+<span class="pc" id="L22">    private SimpleIntegerProperty defenseValue = new SimpleIntegerProperty(this, &quot;defenseValue&quot;);</span>
+
+    // Default constructor
+<span class="nc" id="L25">    public Statistics() {</span>
+<span class="nc" id="L26">        this.health = 0;</span>
+<span class="nc" id="L27">        this.defense = 0;</span>
+<span class="nc" id="L28">        this.exp = 0;</span>
+<span class="nc" id="L29">        this.gold = 0;</span>
+<span class="nc" id="L30">    }</span>
+
+    /**
+     * entity constructor for Statistics
+     * 
+     * @param health
+     * @param attack
+     * @param defense
+     * @param exp
+     * @param gold
+     */
+<span class="fc" id="L41">    public Statistics(int health, int attack, int defense, int exp, int gold) {</span>
+<span class="fc" id="L42">        this.health = health;</span>
+<span class="fc" id="L43">        this.attack = attack;</span>
+<span class="fc" id="L44">        this.defense = defense;</span>
+<span class="fc" id="L45">        this.exp = exp;</span>
+<span class="fc" id="L46">        this.gold = gold;</span>
+<span class="fc" id="L47">        this.healthValue.set(health);</span>
+<span class="fc" id="L48">        this.goldValue.set(gold);</span>
+<span class="fc" id="L49">        this.expValue.set(exp);</span>
+<span class="fc" id="L50">        this.attackValue.set(attack);</span>
+<span class="fc" id="L51">        this.defenseValue.set(defense);</span>
+<span class="fc" id="L52">    }</span>
+
+    /**
+     * getter for Health
+     * 
+     * @return int
+     */
+    public int getHealth() {
+<span class="fc" id="L60">        getHealthProperty();</span>
+<span class="fc" id="L61">        return health;</span>
+    }
+
+    /**
+     * getter for Attack
+     * 
+     * @return int
+     */
+
+    public int getAttack() {
+<span class="fc" id="L71">        return attack;</span>
+    }
+
+    /**
+     * getter for Gold
+     * 
+     * @return int
+     */
+    public int getGold() {
+<span class="fc" id="L80">        return gold;</span>
+    }
+
+    /**
+     * getter for exp
+     * 
+     * @return int
+     */
+    public int getExp() {
+<span class="fc" id="L89">        return exp;</span>
+    }
+
+    /**
+     * setter for Health
+     * 
+     * @param healthPoints
+     */
+    public void setHealth(int healthPoints) {
+<span class="fc" id="L98">        this.health = healthPoints;</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (this.health &gt; 100) {</span>
+<span class="fc" id="L100">            this.health = 100;</span>
+        }
+<span class="fc" id="L102">        setHealthProperty(health);</span>
+<span class="fc" id="L103">    }</span>
+
+    /**
+     * setter for Attack
+     * 
+     * @param attack
+     */
+    public void setAttack(int attack) {
+<span class="fc" id="L111">        setAttackProperty(attack);</span>
+<span class="fc" id="L112">        this.attack = attack;</span>
+<span class="fc" id="L113">    }</span>
+
+    /**
+     * setter for Defense
+     * 
+     * @param defense
+     */
+    public void setDefense(int defense) {
+<span class="fc" id="L121">        setDefenseProperty(defense);</span>
+<span class="fc" id="L122">        this.defense = defense;</span>
+<span class="fc" id="L123">    }</span>
+
+    /**
+     * setter for Gold
+     * 
+     * @param gold
+     */
+    public void setGold(int gold) {
+<span class="fc" id="L131">        setGoldProperty(gold);</span>
+<span class="fc" id="L132">        this.gold = gold;</span>
+<span class="fc" id="L133">    }</span>
+
+    /**
+     * setter for Exp
+     * 
+     * @param exp
+     */
+    public void setExp(int exp) {
+<span class="fc" id="L141">        setExpProperty(exp);</span>
+<span class="fc" id="L142">        this.exp = exp;</span>
+<span class="fc" id="L143">    }</span>
+
+    /**
+     * getter for Defense
+     * 
+     * @return int
+     */
+    public int getDefense() {
+<span class="fc" id="L151">        return defense;</span>
+    }
+
+    /**
+     * method for reduce Health
+     * 
+     * @param value
+     */
+    public void reduceHealth(int value) {
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">        if (value &lt; 0) {</span>
+<span class="nc" id="L161">            value = 0;</span>
+        }
+<span class="fc" id="L163">        health = health - value;</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        if (health &lt; 0) {</span>
+<span class="fc" id="L165">            health = 0;</span>
+        }
+
+        // bindings for JavaFX
+<span class="fc" id="L169">        setHealthProperty(getHealthProperty() - value);</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        if (getHealthProperty() &lt; 0) {</span>
+<span class="fc" id="L171">            setHealthProperty(0);</span>
+        }
+<span class="fc" id="L173">    }</span>
+
+    /**
+     * method to get HealthValueProperty
+     * 
+     * @return IntegerProperty
+     */
+    public IntegerProperty HealthValueProperty() {
+<span class="nc" id="L181">        return healthValue;</span>
+    }
+
+    /**
+     * getter for healthValue
+     * 
+     * @return int
+     */
+    public int getHealthProperty() {
+<span class="fc" id="L190">        return healthValue.get();</span>
+    }
+
+    /**
+     * setter for Health Property
+     * 
+     * @param health
+     */
+    public void setHealthProperty(int health) {
+<span class="fc" id="L199">        this.healthValue.set(health);</span>
+<span class="fc" id="L200">    }</span>
+
+    /**
+     * method to get GoldValueProperty
+     * 
+     * @return IntegerProperty
+     */
+    public IntegerProperty goldValueProperty() {
+<span class="nc" id="L208">        return goldValue;</span>
+    }
+
+    /**
+     * getter for GoldProperty
+     * 
+     * @return int
+     */
+    public int getGoldProperty() {
+<span class="nc" id="L217">        return goldValue.get();</span>
+    }
+
+    /**
+     * setter for GoldProperty
+     * 
+     * @param gold
+     */
+    public void setGoldProperty(int gold) {
+<span class="fc" id="L226">        this.goldValue.set(gold);</span>
+<span class="fc" id="L227">    }</span>
+
+    /**
+     * method to get expValueProperty
+     * 
+     * @return IntegerProperty
+     */
+    public IntegerProperty expValueProperty() {
+<span class="nc" id="L235">        return expValue;</span>
+    }
+
+    /**
+     * getter for ExpProperty
+     * 
+     * @return int
+     */
+    public int getExpProperty() {
+<span class="nc" id="L244">        return expValue.get();</span>
+    }
+
+    /**
+     * setter for ExpProperty
+     * 
+     * @param exp
+     */
+    public void setExpProperty(int exp) {
+<span class="fc" id="L253">        this.expValue.set(exp);</span>
+<span class="fc" id="L254">    }</span>
+
+    /**
+     * method to get attackValueProperty
+     * 
+     * @return IntegerProperty
+     */
+    public IntegerProperty attackValueProperty() {
+<span class="nc" id="L262">        return attackValue;</span>
+    }
+
+    /**
+     * getter for AttackProperty
+     * 
+     * @return int
+     */
+    public int getattackProperty() {
+<span class="nc" id="L271">        return attackValue.get();</span>
+    }
+
+    /**
+     * setter for AttackProperty
+     * 
+     * @param attack
+     */
+    public void setAttackProperty(int attack) {
+<span class="fc" id="L280">        this.attackValue.set(attack);</span>
+<span class="fc" id="L281">    }</span>
+
+    /**
+     * method to get defenseValueProperty
+     * 
+     * @return IntegerProperty
+     */
+    public IntegerProperty defenseValueProperty() {
+<span class="nc" id="L289">        return defenseValue;</span>
+    }
+
+    /**
+     * getter for DefenseProperty
+     * 
+     * @return int
+     */
+    public int getDefenseProperty() {
+<span class="nc" id="L298">        return defenseValue.get();</span>
+    }
+
+    /**
+     * setter for DefenseProperty
+     * 
+     * @param defense
+     */
+    public void setDefenseProperty(int defense) {
+<span class="fc" id="L307">        this.defenseValue.set(defense);</span>
+<span class="fc" id="L308">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

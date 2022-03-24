@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Shop.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">21T2-cs2511-project</a> &gt; <a href="index.source.html" class="el_package">unsw.loopmania</a> &gt; <span class="el_source">Shop.java</span></div><h1>Shop.java</h1><pre class="source lang-java linenums">package unsw.loopmania;
+
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+
+public class Shop {
+
+<span class="pc" id="L8">    private int total = 0;</span>
+
+    private LoopManiaWorld world;
+    private Character character;
+    private Statistics statistics;
+
+<span class="nc" id="L14">    public Shop(LoopManiaWorld world) {</span>
+<span class="nc" id="L15">        this.world = world;</span>
+<span class="nc" id="L16">        this.character = world.getCharacter();</span>
+<span class="nc" id="L17">        this.statistics = character.getStats();</span>
+<span class="nc" id="L18">    }</span>
+
+    private int potions;
+    private int swords;
+    private int stakes;
+    private int staffs;
+    private int helmets;
+    private int armours;
+    private int shields;
+
+<span class="pc" id="L28">    private IntegerProperty totalValue = new SimpleIntegerProperty(this, &quot;totalValue&quot;);</span>
+<span class="pc" id="L29">    private IntegerProperty potionsValue = new SimpleIntegerProperty(this, &quot;potionsValue&quot;);</span>
+<span class="pc" id="L30">    private IntegerProperty swordsValue = new SimpleIntegerProperty(this, &quot;swordsValue&quot;);</span>
+<span class="pc" id="L31">    private IntegerProperty stakesValue = new SimpleIntegerProperty(this, &quot;stakesValue&quot;);</span>
+<span class="pc" id="L32">    private IntegerProperty staffsValue = new SimpleIntegerProperty(this, &quot;staffsValue&quot;);</span>
+<span class="pc" id="L33">    private IntegerProperty helmetsValue = new SimpleIntegerProperty(this, &quot;helmetsValue&quot;);</span>
+<span class="pc" id="L34">    private IntegerProperty armoursValue = new SimpleIntegerProperty(this, &quot;armoursValue&quot;);</span>
+<span class="pc" id="L35">    private IntegerProperty shieldsValue = new SimpleIntegerProperty(this, &quot;shieldsValue&quot;);</span>
+
+    public IntegerProperty totalValue() {
+<span class="nc" id="L38">        return totalValue;</span>
+    }
+
+    public int getTotalValue() {
+<span class="nc" id="L42">        return totalValue.get();</span>
+    }
+
+    public void setTotalValue(int totalValue) {
+<span class="nc" id="L46">        this.totalValue.set(totalValue);</span>
+<span class="nc" id="L47">    }</span>
+
+    public IntegerProperty potionsValueProperty() {
+<span class="nc" id="L50">        return potionsValue;</span>
+    }
+
+    public int getPotionsValue() {
+<span class="nc" id="L54">        return potionsValue.get();</span>
+    }
+
+    public void setPotionsValue(int potionsValue) {
+<span class="nc" id="L58">        this.potionsValue.set(potionsValue);</span>
+<span class="nc" id="L59">    }</span>
+
+    public IntegerProperty swordsValueProperty() {
+<span class="nc" id="L62">        return swordsValue;</span>
+    }
+
+    public int getSwordsValue() {
+<span class="nc" id="L66">        return swordsValue.get();</span>
+    }
+
+    public void setSwordsValue(int swordsValue) {
+<span class="nc" id="L70">        this.swordsValue.set(swordsValue);</span>
+<span class="nc" id="L71">    }</span>
+
+    public IntegerProperty stakesValueProperty() {
+<span class="nc" id="L74">        return stakesValue;</span>
+    }
+
+    public int getStakesValue() {
+<span class="nc" id="L78">        return stakesValue.get();</span>
+    }
+
+    public void setStakesValue(int stakesValue) {
+<span class="nc" id="L82">        this.stakesValue.set(stakesValue);</span>
+<span class="nc" id="L83">    }</span>
+
+    public IntegerProperty staffsValueProperty() {
+<span class="nc" id="L86">        return staffsValue;</span>
+    }
+
+    public int getStaffsValue() {
+<span class="nc" id="L90">        return staffsValue.get();</span>
+    }
+
+    public void setStaffsValue(int staffsValue) {
+<span class="nc" id="L94">        this.staffsValue.set(staffsValue);</span>
+<span class="nc" id="L95">    }</span>
+
+    public IntegerProperty helmetsValueProperty() {
+<span class="nc" id="L98">        return helmetsValue;</span>
+    }
+
+    public int getHelmetsValue() {
+<span class="nc" id="L102">        return helmetsValue.get();</span>
+    }
+
+    public void setHelmetsValue(int helmetsValue) {
+<span class="nc" id="L106">        this.helmetsValue.set(helmetsValue);</span>
+<span class="nc" id="L107">    }</span>
+
+    public IntegerProperty armoursValueProperty() {
+<span class="nc" id="L110">        return armoursValue;</span>
+    }
+
+    public int getArmoursValue() {
+<span class="nc" id="L114">        return armoursValue.get();</span>
+    }
+
+    public void setArmoursValue(int armoursValue) {
+<span class="nc" id="L118">        this.armoursValue.set(armoursValue);</span>
+<span class="nc" id="L119">    }</span>
+
+    public IntegerProperty shieldsValueProperty() {
+<span class="nc" id="L122">        return shieldsValue;</span>
+    }
+
+    public int getShieldsValue() {
+<span class="nc" id="L126">        return shieldsValue.get();</span>
+    }
+
+    public void setShieldsValue(int shieldsValue) {
+<span class="nc" id="L130">        this.shieldsValue.set(shieldsValue);</span>
+<span class="nc" id="L131">    }</span>
+
+    public int getTotal() {
+<span class="nc" id="L134">        return total;</span>
+    }
+
+    public void setTotal(int total) {
+<span class="nc" id="L138">        setTotalValue(total);</span>
+<span class="nc" id="L139">        this.total = total;</span>
+<span class="nc" id="L140">    }</span>
+
+<span class="fc" id="L142">    public Shop() {</span>
+<span class="fc" id="L143">        this.total = 0;</span>
+<span class="fc" id="L144">        this.shopping = false;</span>
+<span class="fc" id="L145">        this.potions = 0;</span>
+<span class="fc" id="L146">        this.swords = 0;</span>
+<span class="fc" id="L147">        this.stakes = 0;</span>
+<span class="fc" id="L148">        this.staffs = 0;</span>
+<span class="fc" id="L149">        this.helmets = 0;</span>
+<span class="fc" id="L150">        this.armours = 0;</span>
+<span class="fc" id="L151">        this.shields = 0;</span>
+<span class="fc" id="L152">    }</span>
+
+    private boolean shopping;
+
+    public boolean isShopping() {
+<span class="nc" id="L157">        return shopping;</span>
+    }
+
+    public void setShopping(boolean shopping) {
+<span class="nc" id="L161">        this.shopping = shopping;</span>
+<span class="nc" id="L162">    }</span>
+
+    public LoopManiaWorld getWorld() {
+<span class="nc" id="L165">        return world;</span>
+    }
+
+    public void setWorld(LoopManiaWorld world) {
+<span class="nc" id="L169">        this.world = world;</span>
+<span class="nc" id="L170">    }</span>
+
+    public int getPotions() {
+<span class="nc" id="L173">        return potions;</span>
+    }
+
+    public void setPotions(int potions) {
+<span class="nc" id="L177">        setPotionsValue(potions);</span>
+<span class="nc" id="L178">        this.potions = potions;</span>
+<span class="nc" id="L179">    }</span>
+
+    public int getSwords() {
+<span class="nc" id="L182">        return swords;</span>
+    }
+
+    public void setSwords(int swords) {
+<span class="nc" id="L186">        setSwordsValue(swords);</span>
+<span class="nc" id="L187">        this.swords = swords;</span>
+<span class="nc" id="L188">    }</span>
+
+    public int getStakes() {
+<span class="nc" id="L191">        return stakes;</span>
+    }
+
+    public void setStakes(int stakes) {
+<span class="nc" id="L195">        setStakesValue(stakes);</span>
+<span class="nc" id="L196">        this.stakes = stakes;</span>
+<span class="nc" id="L197">    }</span>
+
+    public int getStaffs() {
+<span class="nc" id="L200">        return staffs;</span>
+    }
+
+    public void setStaffs(int staffs) {
+<span class="nc" id="L204">        setStaffsValue(staffs);</span>
+<span class="nc" id="L205">        this.staffs = staffs;</span>
+<span class="nc" id="L206">    }</span>
+
+    public int getHelmets() {
+<span class="nc" id="L209">        return helmets;</span>
+    }
+
+    public void setHelmets(int helmets) {
+<span class="nc" id="L213">        setHelmetsValue(helmets);</span>
+<span class="nc" id="L214">        this.helmets = helmets;</span>
+<span class="nc" id="L215">    }</span>
+
+    public int getArmours() {
+<span class="nc" id="L218">        return armours;</span>
+    }
+
+    public void setArmours(int armours) {
+<span class="nc" id="L222">        setArmoursValue(armours);</span>
+<span class="nc" id="L223">        this.armours = armours;</span>
+<span class="nc" id="L224">    }</span>
+
+    public int getShields() {
+<span class="nc" id="L227">        return shields;</span>
+    }
+
+    public void setShields(int shields) {
+<span class="nc" id="L231">        setShieldsValue(shields);</span>
+<span class="nc" id="L232">        this.shields = shields;</span>
+<span class="nc" id="L233">    }</span>
+
+    public void addPotion() {
+<span class="nc" id="L236">        setTotal(getTotal() + 10);</span>
+<span class="nc" id="L237">        setPotions(getPotions() + 1);</span>
+
+<span class="nc" id="L239">    }</span>
+
+    public void subtractPotion() {
+<span class="nc bnc" id="L242" title="All 2 branches missed.">        if (getPotions() &gt; 0) {</span>
+<span class="nc" id="L243">            setTotal(getTotal() - 10);</span>
+<span class="nc" id="L244">            setPotions(getPotions() - 1);</span>
+        }
+<span class="nc" id="L246">    }</span>
+
+    public void addSword() {
+<span class="nc" id="L249">        setTotal(getTotal() + 50);</span>
+<span class="nc" id="L250">        setSwords(getSwords() + 1);</span>
+
+<span class="nc" id="L252">    }</span>
+
+    public void subtractSword() {
+
+<span class="nc bnc" id="L256" title="All 2 branches missed.">        if (getSwords() &gt; 0) {</span>
+<span class="nc" id="L257">            setTotal(getTotal() - 50);</span>
+<span class="nc" id="L258">            setSwords(getSwords() - 1);</span>
+        }
+<span class="nc" id="L260">    }</span>
+
+    public void addStaff() {
+
+<span class="nc" id="L264">        setTotal(getTotal() + 80);</span>
+<span class="nc" id="L265">        setStaffs(getStaffs() + 1);</span>
+<span class="nc" id="L266">    }</span>
+
+    public void subtractStaff() {
+
+<span class="nc bnc" id="L270" title="All 2 branches missed.">        if (getStaffs() &gt; 0) {</span>
+<span class="nc" id="L271">            setTotal(getTotal() - 80);</span>
+<span class="nc" id="L272">            setStaffs(getStaffs() - 1);</span>
+        }
+<span class="nc" id="L274">    }</span>
+
+    public void addStake() {
+
+<span class="nc" id="L278">        setTotal(getTotal() + 30);</span>
+<span class="nc" id="L279">        setStakes(getStakes() + 1);</span>
+<span class="nc" id="L280">    }</span>
+
+    public void subtractStake() {
+
+<span class="nc bnc" id="L284" title="All 2 branches missed.">        if (getStakes() &gt; 0) {</span>
+<span class="nc" id="L285">            setTotal(getTotal() - 30);</span>
+<span class="nc" id="L286">            setStakes(getStakes() - 1);</span>
+
+        }
+<span class="nc" id="L289">    }</span>
+
+    public void addHelmet() {
+
+<span class="nc" id="L293">        setTotal(getTotal() + 20);</span>
+<span class="nc" id="L294">        setHelmets(getHelmets() + 1);</span>
+
+<span class="nc" id="L296">    }</span>
+
+    public void subtractHelmet() {
+
+<span class="nc bnc" id="L300" title="All 2 branches missed.">        if (getHelmets() &gt; 0) {</span>
+<span class="nc" id="L301">            setTotal(getTotal() - 20);</span>
+<span class="nc" id="L302">            setHelmets(getHelmets() - 1);</span>
+        }
+<span class="nc" id="L304">    }</span>
+
+    public void addArmour() {
+
+<span class="nc" id="L308">        setTotal(getTotal() + 70);</span>
+
+<span class="nc" id="L310">        setArmours(getArmours() + 1);</span>
+<span class="nc" id="L311">    }</span>
+
+    public void subtractArmour() {
+
+<span class="nc bnc" id="L315" title="All 2 branches missed.">        if (getArmours() &gt; 0) {</span>
+
+<span class="nc" id="L317">            setTotal(getTotal() - 70);</span>
+<span class="nc" id="L318">            setArmours(getArmours() - 1);</span>
+
+        }
+<span class="nc" id="L321">    }</span>
+
+    public void addShield() {
+
+<span class="nc" id="L325">        setTotal(getTotal() + 40);</span>
+<span class="nc" id="L326">        setShields(getShields() + 1);</span>
+
+<span class="nc" id="L328">    }</span>
+
+    public void subtractShield() {
+
+<span class="nc bnc" id="L332" title="All 2 branches missed.">        if (getShields() &gt; 0) {</span>
+<span class="nc" id="L333">            setTotal(getTotal() - 70);</span>
+<span class="nc" id="L334">            setShields(getShields() - 1);</span>
+        }
+
+<span class="nc" id="L337">    }</span>
+
+    /**
+     * Determines whether there are sufficient funds to purchase the items requested
+     * Return true if there are enough funds, else false.
+     * 
+     * @param world
+     */
+    public boolean sufficientFunds(Statistics statistics) {
+
+        // Total of requested items exceeds characters' gold
+<span class="nc bnc" id="L348" title="All 2 branches missed.">        if (getTotal() &gt; statistics.getGold()) {</span>
+<span class="nc" id="L349">            return false;</span>
+        }
+
+<span class="nc" id="L352">        return true;</span>
+    }
+
+    /**
+     * Handles the finalising of the shop transaction. Decrements each of the
+     * requested items from the shop and adds to the character's inventory.
+     * Decreases the character's gold.
+     * 
+     * @param stats
+     * @param world
+     */
+    public void finaliseTransaction(Statistics stats, LoopManiaWorld world) {
+
+<span class="nc bnc" id="L365" title="All 2 branches missed.">        while (getSwords() &gt; 0) {</span>
+<span class="nc" id="L366">            world.addUnequippedItem(0);</span>
+<span class="nc" id="L367">            setSwords(getSwords() - 1);</span>
+        }
+
+<span class="nc bnc" id="L370" title="All 2 branches missed.">        while (getStakes() &gt; 0) {</span>
+<span class="nc" id="L371">            world.addUnequippedItem(1);</span>
+<span class="nc" id="L372">            setStakes(getStakes() - 1);</span>
+        }
+
+<span class="nc bnc" id="L375" title="All 2 branches missed.">        while (getArmours() &gt; 0) {</span>
+<span class="nc" id="L376">            world.addUnequippedItem(2);</span>
+<span class="nc" id="L377">            setArmours(getArmours() - 1);</span>
+        }
+
+<span class="nc bnc" id="L380" title="All 2 branches missed.">        while (getHelmets() &gt; 0) {</span>
+<span class="nc" id="L381">            world.addUnequippedItem(3);</span>
+<span class="nc" id="L382">            setHelmets(getHelmets() - 1);</span>
+        }
+
+<span class="nc bnc" id="L385" title="All 2 branches missed.">        while (getShields() &gt; 0) {</span>
+<span class="nc" id="L386">            world.addUnequippedItem(4);</span>
+<span class="nc" id="L387">            setShields(getShields() - 1);</span>
+        }
+
+<span class="nc bnc" id="L390" title="All 2 branches missed.">        while (getPotions() &gt; 0) {</span>
+<span class="nc" id="L391">            world.addUnequippedItem(5);</span>
+<span class="nc" id="L392">            setPotions(getPotions() - 1);</span>
+        }
+
+<span class="nc bnc" id="L395" title="All 2 branches missed.">        while (getStaffs() &gt; 0) {</span>
+<span class="nc" id="L396">            world.addUnequippedItem(6);</span>
+<span class="nc" id="L397">            setStaffs(getStaffs() - 1);</span>
+        }
+
+        // Decrement the players gold.
+<span class="nc" id="L401">        stats.setGold(stats.getGold() - getTotal());</span>
+
+        // Set total back to zero after each transaction
+<span class="nc" id="L404">        setTotal(0);</span>
+
+<span class="nc" id="L406">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

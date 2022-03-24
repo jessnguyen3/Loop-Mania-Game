@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Goals.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">21T2-cs2511-project</a> &gt; <a href="index.source.html" class="el_package">unsw.loopmania</a> &gt; <span class="el_source">Goals.java</span></div><h1>Goals.java</h1><pre class="source lang-java linenums">package unsw.loopmania;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+
+/**
+ * Statistics for each entity
+ */
+public class Goals {
+    /**
+     * basic attributes for Goals
+     */
+    private int ANDLoops;
+    private int ANDGold;
+    private int ANDExp;
+    private int ORLoops;
+    private int ORGold;
+    private int ORExp;
+    private JSONObject allGoals;
+    private boolean ORGoalsActive;
+    /**
+     * SimpleIntegerProperty varibles for ANDGoals
+     */
+<span class="fc" id="L27">    private SimpleIntegerProperty ANDLoopsValue = new SimpleIntegerProperty(this, &quot;ANDLoops&quot;);</span>
+<span class="fc" id="L28">    private SimpleIntegerProperty ANDGoldValue = new SimpleIntegerProperty(this, &quot;ANDGold&quot;);</span>
+<span class="fc" id="L29">    private SimpleIntegerProperty ANDExpValue = new SimpleIntegerProperty(this, &quot;ANDExp&quot;);</span>
+    /**
+     * SimpleIntegerProperty varibles for ORGoals
+     */
+<span class="fc" id="L33">    private SimpleIntegerProperty ORLoopsValue = new SimpleIntegerProperty(this, &quot;ORLoops&quot;);</span>
+<span class="fc" id="L34">    private SimpleIntegerProperty ORGoldValue = new SimpleIntegerProperty(this, &quot;ORGold&quot;);</span>
+<span class="fc" id="L35">    private SimpleIntegerProperty ORExpValue = new SimpleIntegerProperty(this, &quot;ORExp&quot;);</span>
+
+    /**
+     * constructor for Goals
+     * 
+     * @param goal_condition
+     */
+<span class="fc" id="L42">    public Goals(JSONObject goal_condition) {</span>
+        // intialise AND and OR loops
+<span class="fc" id="L44">        this.ANDLoops = 0;</span>
+<span class="fc" id="L45">        this.ANDGold = 0;</span>
+<span class="fc" id="L46">        this.ANDExp = 0;</span>
+<span class="fc" id="L47">        this.ORLoops = 0;</span>
+<span class="fc" id="L48">        this.ORGold = 0;</span>
+<span class="fc" id="L49">        this.ORExp = 0;</span>
+        // this.ANDLoopsValue.set(0);
+        // this.ANDGoldValue.set(0);
+        // this.ANDExpValue.set(0);
+<span class="fc" id="L53">        this.ORGoalsActive = false;</span>
+<span class="fc" id="L54">        allGoals = new JSONObject();</span>
+<span class="fc" id="L55">        int quantity = 0;</span>
+
+        // create JSONObject containing goals
+<span class="fc" id="L58">        String goal = goal_condition.getString(&quot;goal&quot;);</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (goal.equals(&quot;AND&quot;)) {</span>
+<span class="fc" id="L60">            JSONArray ANDGoals = goal_condition.getJSONArray(&quot;subgoals&quot;);</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">            for (int i = 0; i &lt; ANDGoals.length(); i++) {</span>
+<span class="fc" id="L62">                JSONObject ANDGoal = ANDGoals.getJSONObject(i);</span>
+<span class="fc" id="L63">                goal = ANDGoal.getString(&quot;goal&quot;);</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">                if (goal.equals(&quot;OR&quot;)) {</span>
+<span class="fc" id="L65">                    JSONArray ORGoals = ANDGoal.getJSONArray(&quot;subgoals&quot;);</span>
+<span class="fc" id="L66">                    ORGoalsActive = true;</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">                    for (int j = 0; j &lt; ORGoals.length(); j++) {</span>
+<span class="fc" id="L68">                        JSONObject ORGoal = ORGoals.getJSONObject(j);</span>
+<span class="fc" id="L69">                        goal = &quot;OR&quot; + ORGoal.getString(&quot;goal&quot;);</span>
+<span class="fc" id="L70">                        quantity = ORGoal.getInt(&quot;quantity&quot;);</span>
+<span class="fc" id="L71">                        this.setGoals(goal, quantity);</span>
+                    }
+<span class="fc" id="L73">                } else {</span>
+<span class="fc" id="L74">                    quantity = ANDGoal.getInt(&quot;quantity&quot;);</span>
+<span class="fc" id="L75">                    this.setGoals(goal, quantity);</span>
+                }
+            }
+<span class="fc" id="L78">        } else {</span>
+<span class="fc" id="L79">            quantity = goal_condition.getInt(&quot;quantity&quot;);</span>
+<span class="fc" id="L80">            this.setGoals(goal, quantity);</span>
+        }
+        // put ALL and OR conditions into allGoals
+<span class="fc" id="L83">        allGoals.put(&quot;ANDLoops&quot;, ANDLoops);</span>
+<span class="fc" id="L84">        allGoals.put(&quot;ANDExp&quot;, ANDExp);</span>
+<span class="fc" id="L85">        allGoals.put(&quot;ANDGold&quot;, ANDGold);</span>
+<span class="fc" id="L86">        allGoals.put(&quot;ORLoops&quot;, ORLoops);</span>
+<span class="fc" id="L87">        allGoals.put(&quot;ORExp&quot;, ORExp);</span>
+<span class="fc" id="L88">        allGoals.put(&quot;ORGold&quot;, ORGold);</span>
+
+        // set the valueProperty for each AND and OR conditions
+<span class="fc" id="L91">        setANDLoopsValueProperty(this.ANDLoops);</span>
+<span class="fc" id="L92">        setANDGoldValueProperty(this.ANDGold);</span>
+<span class="fc" id="L93">        setANDExpValueProperty(this.ANDExp);</span>
+
+<span class="fc" id="L95">        setORLoopsValueProperty(this.ORLoops);</span>
+<span class="fc" id="L96">        setORGoldValueProperty(this.ORGold);</span>
+<span class="fc" id="L97">        setORExpValueProperty(this.ORExp);</span>
+
+<span class="fc" id="L99">    }</span>
+
+    /**
+     * sets goals for the character to achieve
+     * 
+     * @param goal
+     * @param quantity
+     */
+    public void setGoals(String goal, int quantity) {
+        // switch statement for type of goals
+<span class="pc bpc" id="L109" title="4 of 7 branches missed.">        switch (goal) {</span>
+            case &quot;cycles&quot;:
+<span class="nc" id="L111">                this.ANDLoops = quantity;</span>
+                // this.ANDLoopsValue.set(quantity);
+                // setANDLoopsValueProperty(quantity);
+<span class="nc" id="L114">                break;</span>
+            case &quot;gold&quot;:
+<span class="nc" id="L116">                this.ANDGold = quantity;</span>
+                // this.ANDGoldValue.set(quantity);
+                // setANDGoldValueProperty(quantity);
+<span class="nc" id="L119">                break;</span>
+            case &quot;experience&quot;:
+<span class="fc" id="L121">                this.ANDExp = quantity;</span>
+                // this.ANDExpValue.set(quantity);
+                // setANDExpValueProperty(quantity);
+<span class="fc" id="L124">                break;</span>
+            case &quot;ORcycles&quot;:
+<span class="nc" id="L126">                this.ORLoops = quantity;</span>
+<span class="nc" id="L127">                break;</span>
+            case &quot;ORgold&quot;:
+<span class="fc" id="L129">                this.ORGold = quantity;</span>
+<span class="fc" id="L130">                break;</span>
+            case &quot;ORexperience&quot;:
+<span class="fc" id="L132">                this.ORExp = quantity;</span>
+                break;
+        }
+<span class="fc" id="L135">    }</span>
+
+    /**
+     * method to printAllGoals to STDOUT
+     */
+    public void printAllGoals() {
+<span class="fc" id="L141">        System.out.println(&quot;Mandatory goals&quot;);</span>
+<span class="fc" id="L142">        System.out.println(&quot;Loops required: &quot; + ANDLoops);</span>
+<span class="fc" id="L143">        System.out.println(&quot;Experience required: &quot; + ANDExp);</span>
+<span class="fc" id="L144">        System.out.println(&quot;Gold required: &quot; + ANDGold);</span>
+<span class="fc" id="L145">        System.out.println();</span>
+<span class="fc" id="L146">        System.out.println(&quot;Optional goals&quot;);</span>
+<span class="fc" id="L147">        System.out.println(&quot;Loops: &quot; + ORLoops);</span>
+<span class="fc" id="L148">        System.out.println(&quot;Experience : &quot; + ORExp);</span>
+<span class="fc" id="L149">        System.out.println(&quot;Gold : &quot; + ORGold);</span>
+<span class="fc" id="L150">        System.out.println();</span>
+<span class="fc" id="L151">    }</span>
+
+    /**
+     * method if character has met goals
+     * 
+     * @param stats
+     * @param numLoops
+     * @return
+     */
+    public boolean checkGoalsMet(Statistics stats, int numLoops) {
+<span class="fc" id="L161">        int exp = stats.getExp();</span>
+<span class="fc" id="L162">        int gold = stats.getGold();</span>
+        // if goals have been met, return true and print the game has been won
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        if (checkANDGoals(exp, gold, numLoops)) {</span>
+<span class="pc bpc" id="L165" title="1 of 2 branches missed.">            if (ORGoalsActive) {</span>
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">                if (checkORGoals(exp, gold, numLoops)) {</span>
+                    // System.out.println(&quot;====================&quot;);
+                    // System.out.println(&quot;You've won the game!&quot;);
+                    // System.out.println(&quot;====================&quot;);
+<span class="fc" id="L170">                    return true;</span>
+                }
+            } else {
+                // System.out.println(&quot;====================&quot;);
+                // System.out.println(&quot;You've won the game!&quot;);
+                // System.out.println(&quot;====================&quot;);
+<span class="nc" id="L176">                return true;</span>
+            }
+        }
+        // otherwise return false
+<span class="fc" id="L180">        return false;</span>
+    }
+
+    /**
+     * method to check if player stats have achieved the goal requirement
+     * 
+     * @param current
+     * @param target
+     * @return boolean
+     */
+    public boolean checkStats(int current, int target) {
+<span class="fc bfc" id="L191" title="All 2 branches covered.">        return current &gt;= target;</span>
+    }
+
+    /**
+     * method to check if ORGoals have been met
+     * 
+     * @param exp
+     * @param gold
+     * @param numLoops
+     * @return boolean
+     */
+    public boolean checkORGoals(int exp, int gold, int numLoops) {
+<span class="pc bpc" id="L203" title="7 of 10 branches missed.">        if ((ORLoops &gt; 0 &amp;&amp; checkStats(numLoops, ORLoops)) || (ORExp &gt; 0 &amp;&amp; checkStats(exp, ORExp))</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">                || (ORGold &gt; 0 &amp;&amp; checkStats(gold, ORGold))) {</span>
+<span class="fc" id="L205">            return true;</span>
+        }
+<span class="nc" id="L207">        return false;</span>
+    }
+
+    /**
+     * method to check if ANDGoals have been met
+     * 
+     * @param exp
+     * @param gold
+     * @param numLoops
+     * @return boolean
+     */
+    public boolean checkANDGoals(int exp, int gold, int numLoops) {
+<span class="pc bpc" id="L219" title="2 of 6 branches missed.">        if (checkStats(exp, ANDExp) &amp;&amp; checkStats(gold, ANDGold) &amp;&amp; checkStats(numLoops, ANDLoops)) {</span>
+<span class="fc" id="L220">            return true;</span>
+        }
+<span class="fc" id="L222">        return false;</span>
+    }
+
+    /**
+     * method to getAllGoals
+     * 
+     * @return JSONObject
+     */
+    public JSONObject getAllGoals() {
+<span class="fc" id="L231">        return allGoals;</span>
+    }
+
+    /**
+     * method to get ADDLoopsValueProperty
+     * 
+     * @return IntegerProperty
+     */
+    public IntegerProperty ANDLoopsValueProperty() {
+<span class="fc" id="L240">        return ANDLoopsValue;</span>
+    }
+
+    /**
+     * method to get ADDGoldValueProperty
+     * 
+     * @return IntegerProperty
+     */
+    public IntegerProperty ANDGoldValueProperty() {
+<span class="fc" id="L249">        return ANDGoldValue;</span>
+    }
+
+    /**
+     * method to get ADDExpValueProperty
+     * 
+     * @return IntegerProperty
+     */
+    public IntegerProperty ANDExpValueProperty() {
+<span class="fc" id="L258">        return ANDExpValue;</span>
+    }
+
+    /**
+     * setter for ANDLoopsValueProperty
+     * 
+     * @param loops
+     */
+    public void setANDLoopsValueProperty(int loops) {
+<span class="fc" id="L267">        this.ANDLoopsValueProperty().set(loops);</span>
+<span class="fc" id="L268">    }</span>
+
+    /**
+     * setter for ANDGoldValueProperty
+     * 
+     * @param loops
+     */
+    public void setANDGoldValueProperty(int gold) {
+<span class="fc" id="L276">        this.ANDGoldValueProperty().set(gold);</span>
+<span class="fc" id="L277">    }</span>
+
+    /**
+     * setter for ANDExpValueProperty
+     * 
+     * @param loops
+     */
+    public void setANDExpValueProperty(int exp) {
+<span class="fc" id="L285">        this.ANDExpValueProperty().set(exp);</span>
+<span class="fc" id="L286">    }</span>
+
+    /**
+     * method to get ORLoopsValueProperty+
+     * 
+     * @return
+     */
+    public IntegerProperty ORLoopsValueProperty() {
+<span class="fc" id="L294">        return ORLoopsValue;</span>
+    }
+
+    /**
+     * method to get ORGoldValueProperty
+     * 
+     * @return
+     */
+    public IntegerProperty ORGoldValueProperty() {
+<span class="fc" id="L303">        return ORGoldValue;</span>
+    }
+
+    /**
+     * method to get ORExpValueProperty
+     * 
+     * @return
+     */
+    public IntegerProperty ORExpValueProperty() {
+<span class="fc" id="L312">        return ORExpValue;</span>
+    }
+
+    /**
+     * setter for ORLoopsValueProperty
+     * 
+     * @param loops
+     */
+    public void setORLoopsValueProperty(int loops) {
+<span class="fc" id="L321">        this.ORLoopsValueProperty().set(loops);</span>
+<span class="fc" id="L322">    }</span>
+
+    /**
+     * setter for ORGoldValueProperty
+     * 
+     * @param loops
+     */
+    public void setORGoldValueProperty(int gold) {
+<span class="fc" id="L330">        this.ORGoldValueProperty().set(gold);</span>
+<span class="fc" id="L331">    }</span>
+
+    /**
+     * setter for ORExpValueProperty
+     * 
+     * @param loops
+     */
+    public void setORExpValueProperty(int exp) {
+<span class="fc" id="L339">        this.ORExpValueProperty().set(exp);</span>
+<span class="fc" id="L340">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="test.CardTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2021-07-19T00:01:14" hostname="vx7" time="0.071">
+  <properties/>
+  <testcase name="testCardToItem" classname="test.CardTest" time="0.049"/>
+  <testcase name="testCardToBuilding" classname="test.CardTest" time="0.022"/>
+  <system-out><![CDATA[{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+Weapon
+Weapon: Sword has been added
+Weapon
+Weapon: Stake has been added
+Equipment
+Equipment: Shield has been added
+Equipment
+Equipment: Armour has been added
+Equipment
+Equipment
+Weapon
+Weapon
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

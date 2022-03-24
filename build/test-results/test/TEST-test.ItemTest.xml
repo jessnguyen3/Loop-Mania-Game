@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="test.ItemTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2021-07-19T00:01:14" hostname="vx7" time="0.004">
+  <properties/>
+  <testcase name="testOneRingItem" classname="test.ItemTest" time="0.001"/>
+  <testcase name="testAddRemoveUnequipItem" classname="test.ItemTest" time="0.001"/>
+  <testcase name="testHealthPotion" classname="test.ItemTest" time="0.001"/>
+  <system-out><![CDATA[{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+Spawned a vampire
+Spawned a vampire
+Character attack: 10
+Enemy health: 45
+Enemy attack: 25
+Character attack: 10
+Enemy health: 40
+Enemy attack: 25
+Character attack: 10
+Enemy health: 35
+Enemy attack: 25
+Character attack: 10
+Enemy health: 30
+Enemy attack: 25
+Character attack: 10
+Enemy health: 45
+Enemy attack: 25
+Character attack: 10
+Enemy health: 40
+Enemy attack: 25
+Character attack: 10
+Enemy health: 35
+Enemy attack: 25
+Character attack: 10
+Enemy health: 30
+Enemy attack: 25
+Spawned a vampire
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+Spawned a Zombie
+Character attack: 10
+Enemy health: 12
+Enemy attack: 10
+Character attack: 10
+Enemy health: 4
+Enemy attack: 10
+Character attack: 10
+Enemy health: 0
+Spawned a Zombie
+Spawned a Zombie
+Character attack: 10
+Enemy health: 12
+Enemy attack: 10
+Character attack: 10
+Enemy health: 4
+Enemy attack: 10
+Character attack: 10
+Enemy health: 0
+Character attack: 10
+Enemy health: 12
+Enemy attack: 10
+Character attack: 10
+Enemy health: 4
+Enemy attack: 10
+Character attack: 10
+Enemy health: 0
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="test.BattleTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2021-07-19T00:01:14" hostname="vx7" time="0.061">
+  <properties/>
+  <testcase name="basicBattleWithSlug" classname="test.BattleTest" time="0.003"/>
+  <testcase name="createFalseExistingEnemyType" classname="test.BattleTest" time="0.001"/>
+  <testcase name="tranceBattleTest" classname="test.BattleTest" time="0.008"/>
+  <testcase name="battleWithBuff" classname="test.BattleTest" time="0.018"/>
+  <testcase name="basicBattleWithVampire" classname="test.BattleTest" time="0.004"/>
+  <testcase name="enemySoldierTestBattle" classname="test.BattleTest" time="0.019"/>
+  <testcase name="basicBattleWithZombie" classname="test.BattleTest" time="0.003"/>
+  <system-out><![CDATA[{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+Character attack: 10
+Enemy health: 18
+Enemy attack: 5
+Character attack: 10
+Enemy health: 11
+Enemy attack: 5
+Character attack: 10
+Enemy health: 4
+Enemy attack: 5
+Character attack: 10
+Enemy health: 0
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+Spawned a Zombie
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+Character attack: 10
+Enemy health: 12
+Enemy attack: 10
+Character attack: 10
+Enemy health: 4
+Enemy attack: 10
+Character attack: 10
+Enemy health: 0
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+BarracksCard
+4
+13
+Building on path: true
+Building next to path: true
+TowerCard
+8
+1
+Building on path: false
+Building next to path: true
+CampfireCard
+1
+-1
+Building on path: false
+Building next to path: true
+Character attack: 20
+Enemy health: 8
+Enemy attack: 5
+Character attack: 20
+Enemy health: 0
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+Spawned a vampire
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+Character attack: 10
+Enemy health: 45
+Enemy attack: 25
+Character attack: 10
+Enemy health: 40
+Enemy attack: 25
+Character attack: 10
+Enemy health: 35
+Enemy attack: 25
+Character attack: 10
+Enemy health: 30
+Enemy attack: 25
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+Spawned a Zombie
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+Soldier and enemy battle
+Soldier attack: 8
+Soldier and enemy battle
+Soldier attack: 8
+Soldier and enemy battle
+Soldier attack: 8
+Character attack: 10
+Enemy health: 0
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+Spawned a Zombie
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+Character attack: 10
+Enemy health: 12
+Enemy attack: 10
+Character attack: 10
+Enemy health: 4
+Enemy attack: 10
+Character attack: 10
+Enemy health: 0
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

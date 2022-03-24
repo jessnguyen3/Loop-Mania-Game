@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="test.CharacterTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2021-07-19T00:01:14" hostname="vx7" time="0.02">
+  <properties/>
+  <testcase name="testGold" classname="test.CharacterTest" time="0.009"/>
+  <testcase name="test_character_movement_MAP1" classname="test.CharacterTest" time="0.0"/>
+  <testcase name="test_character_movement_MAP2" classname="test.CharacterTest" time="0.009"/>
+  <testcase name="test_character_stats" classname="test.CharacterTest" time="0.001"/>
+  <testcase name="testCharacterOnTile" classname="test.CharacterTest" time="0.001"/>
+  <system-out><![CDATA[{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"path":["RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+BarracksCard
+1
+0
+Building on path: true
+Building next to path: true
+ZombiePitCard
+3
+4
+Building on path: false
+Building next to path: true
+VampireCastleCard
+3
+2
+Building on path: false
+Building next to path: true
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,999 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoopManiaWorldController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">21T2-cs2511-project</a> &gt; <a href="index.source.html" class="el_package">unsw.loopmania</a> &gt; <span class="el_source">LoopManiaWorldController.java</span></div><h1>LoopManiaWorldController.java</h1><pre class="source lang-java linenums">package unsw.loopmania;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.codefx.libfx.listener.handle.ListenerHandle;
+import org.codefx.libfx.listener.handle.ListenerHandles;
+
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.control.Label;
+import javafx.util.Duration;
+import java.util.EnumMap;
+
+import javafx.beans.binding.Bindings;
+
+import java.io.File;
+import java.io.IOException;
+
+/**
+ * the draggable types. If you add more draggable types, add an enum value here.
+ * This is so we can see what type is being dragged.
+ */
+<span class="nc" id="L45">enum DRAGGABLE_TYPE {</span>
+<span class="nc" id="L46">    CARD, ITEM</span>
+}
+
+/**
+ * A JavaFX controller for the world.
+ * 
+ * All event handlers and the timeline in JavaFX run on the JavaFX application
+ * thread:
+ * https://examples.javacodegeeks.com/desktop-java/javafx/javafx-concurrency-example/
+ * Note in
+ * https://openjfx.io/javadoc/11/javafx.graphics/javafx/application/Application.html
+ * under heading &quot;Threading&quot;, it specifies animation timelines are run in the
+ * application thread. This means that the starter code does not need locks
+ * (mutexes) for resources shared between the timeline KeyFrame, and all of the
+ * event handlers (including between different event handlers). This will make
+ * the game easier for you to implement. However, if you add time-consuming
+ * processes to this, the game may lag or become choppy.
+ * 
+ * If you need to implement time-consuming processes, we recommend: using Task
+ * https://openjfx.io/javadoc/11/javafx.graphics/javafx/concurrent/Task.html by
+ * itself or within a Service
+ * https://openjfx.io/javadoc/11/javafx.graphics/javafx/concurrent/Service.html
+ * 
+ * Tasks ensure that any changes to public properties, change notifications for
+ * errors or cancellation, event handlers, and states occur on the JavaFX
+ * Application thread, so is a better alternative to using a basic Java Thread:
+ * https://docs.oracle.com/javafx/2/threads/jfxpub-threads.htm The Service class
+ * is used for executing/reusing tasks. You can run tasks without Service,
+ * however, if you don't need to reuse it.
+ *
+ * If you implement time-consuming processes in a Task or thread, you may need
+ * to implement locks on resources shared with the application thread (i.e.
+ * Timeline KeyFrame and drag Event handlers). You can check whether code is
+ * running on the JavaFX application thread by running the helper method
+ * printThreadingNotes in this class.
+ * 
+ * NOTE: http://tutorials.jenkov.com/javafx/concurrency.html and
+ * https://www.developer.com/design/multithreading-in-javafx/#:~:text=JavaFX%20has%20a%20unique%20set,in%20the%20JavaFX%20Application%20Thread.
+ * 
+ * If you need to delay some code but it is not long-running, consider using
+ * Platform.runLater
+ * https://openjfx.io/javadoc/11/javafx.graphics/javafx/application/Platform.html#runLater(java.lang.Runnable)
+ * This is run on the JavaFX application thread when it has enough time.
+ */
+public class LoopManiaWorldController {
+
+    /**
+     * squares gridpane includes path images, enemies, character, empty grass,
+     * buildings
+     */
+    @FXML
+    private GridPane squares;
+
+    /**
+     * cards gridpane includes cards and the ground underneath the cards
+     */
+    @FXML
+    private GridPane cards;
+
+    /**
+     * anchorPaneRoot is the &quot;background&quot;. It is useful since anchorPaneRoot
+     * stretches over the entire game world, so we can detect dragging of
+     * cards/items over this and accordingly update DragIcon coordinates
+     */
+    @FXML
+    private AnchorPane anchorPaneRoot;
+
+    /**
+     * equippedItems gridpane is for equipped items (e.g. swords, shield, axe)
+     */
+    @FXML
+    private GridPane equippedItems;
+
+    @FXML
+    private GridPane unequippedInventory;
+
+<span class="nc" id="L122">    @FXML</span>
+    private Label healthLabel = new Label();
+<span class="nc" id="L124">    @FXML</span>
+    private Label goldLabel = new Label();
+<span class="nc" id="L126">    @FXML</span>
+    private Label expLabel = new Label();
+<span class="nc" id="L128">    @FXML</span>
+    private Label alliesLabel = new Label();
+<span class="nc" id="L130">    @FXML</span>
+    private Label loopsLabel = new Label();
+<span class="nc" id="L132">    @FXML</span>
+    private Label attackLabel = new Label();
+<span class="nc" id="L134">    @FXML</span>
+    private Label defenseLabel = new Label();
+
+<span class="nc" id="L137">    @FXML</span>
+    private Label requiredGoldLabel = new Label();
+<span class="nc" id="L139">    @FXML</span>
+    private Label requiredExpLabel = new Label();
+<span class="nc" id="L141">    @FXML</span>
+    private Label requiredLoopsLabel = new Label();
+
+<span class="nc" id="L144">    @FXML</span>
+    private Label optionalGoldLabel = new Label();
+<span class="nc" id="L146">    @FXML</span>
+    private Label optionalExpLabel = new Label();
+<span class="nc" id="L148">    @FXML</span>
+    private Label optionalLoopsLabel = new Label();
+
+<span class="nc" id="L151">    @FXML</span>
+    private Label gameOverScreen = new Label();
+<span class="nc" id="L153">    @FXML</span>
+    private Label gameSuccessScreen = new Label();
+
+<span class="nc" id="L156">    @FXML</span>
+    private StackPane screenBackground = new StackPane();
+
+    // all image views including tiles, character, enemies, cards... even though
+    // cards in separate gridpane...
+    private List&lt;ImageView&gt; entityImages;
+
+    /**
+     * when we drag a card/item, the picture for whatever we're dragging is set here
+     * and we actually drag this node
+     */
+    private DragIcon draggedEntity;
+    private boolean isPaused;
+    private LoopManiaWorld world;
+    private Character character;
+    private Statistics statistics;
+    private Goals worldGoals;
+
+    /**
+     * runs the periodic game logic - second-by-second moving of character through
+     * maze, as well as enemies, and running of battles
+     */
+    private Timeline timeline;
+
+    // Card Images
+    private Image vampireCastleCardImage;
+    private Image zombiePitCardImage;
+    private Image towerCardImage;
+    private Image villageCardImage;
+    private Image barracksCardImage;
+    private Image trapCardImage;
+    private Image campfireCardImage;
+
+    // Building Images
+    private Image vampireCastleImage;
+    private Image zombiePitImage;
+    private Image towerImage;
+    private Image villageImage;
+    private Image barracksImage;
+    private Image trapImage;
+    private Image campfireImage;
+    private Image herosCastleImage;
+
+    // Item Images
+    private Image swordImage;
+    private Image armourImage;
+    private Image helmetImage;
+    private Image shieldImage;
+    private Image stakeImage;
+    private Image staffImage;
+    private Image potionImage;
+    private Image oneRingImage;
+
+    // Enemy Images
+    private Image slugImage;
+    private Image zombieImage;
+    private Image vampireImage;
+
+    // Image for gold
+    private Image goldImage;
+
+    List&lt;Image&gt; allImages;
+    List&lt;Image&gt; allBuildingCardImages;
+    List&lt;Image&gt; allPlacedBuildingImages;
+    List&lt;Image&gt; allItemImages;
+    List&lt;Image&gt; allEnemyImages;
+
+    /**
+     * the image currently being dragged, if there is one, otherwise null. Holding
+     * the ImageView being dragged allows us to spawn it again in the drop location
+     * if appropriate.
+     */
+    // TODO = it would be a good idea for you to instead replace this with the
+    // building/item which should be dropped
+    private ImageView currentlyDraggedImage;
+
+    /**
+     * null if nothing being dragged, or the type of item being dragged
+     */
+    private DRAGGABLE_TYPE currentlyDraggedType;
+
+    /**
+     * mapping from draggable type enum CARD/TYPE to the event handler triggered
+     * when the draggable type is dropped over its appropriate gridpane
+     */
+    private EnumMap&lt;DRAGGABLE_TYPE, EventHandler&lt;DragEvent&gt;&gt; gridPaneSetOnDragDropped;
+    /**
+     * mapping from draggable type enum CARD/TYPE to the event handler triggered
+     * when the draggable type is dragged over the background
+     */
+    private EnumMap&lt;DRAGGABLE_TYPE, EventHandler&lt;DragEvent&gt;&gt; anchorPaneRootSetOnDragOver;
+    /**
+     * mapping from draggable type enum CARD/TYPE to the event handler triggered
+     * when the draggable type is dropped in the background
+     */
+    private EnumMap&lt;DRAGGABLE_TYPE, EventHandler&lt;DragEvent&gt;&gt; anchorPaneRootSetOnDragDropped;
+    /**
+     * mapping from draggable type enum CARD/TYPE to the event handler triggered
+     * when the draggable type is dragged into the boundaries of its appropriate
+     * gridpane
+     */
+    private EnumMap&lt;DRAGGABLE_TYPE, EventHandler&lt;DragEvent&gt;&gt; gridPaneNodeSetOnDragEntered;
+    /**
+     * mapping from draggable type enum CARD/TYPE to the event handler triggered
+     * when the draggable type is dragged outside of the boundaries of its
+     * appropriate gridpane
+     */
+    private EnumMap&lt;DRAGGABLE_TYPE, EventHandler&lt;DragEvent&gt;&gt; gridPaneNodeSetOnDragExited;
+
+    /**
+     * object handling switching to the main menu
+     */
+    private MenuSwitcher mainMenuSwitcher;
+
+    private MenuSwitcher shopSwitcher;
+
+    /**
+     * @param world           world object loaded from file
+     * @param initialEntities the initial JavaFX nodes (ImageViews) which should be
+     *                        loaded into the GUI
+     */
+<span class="nc" id="L277">    public LoopManiaWorldController(LoopManiaWorld world, List&lt;ImageView&gt; initialEntities) {</span>
+<span class="nc" id="L278">        this.world = world;</span>
+<span class="nc" id="L279">        this.character = world.getCharacter();</span>
+<span class="nc" id="L280">        this.statistics = character.getStats();</span>
+<span class="nc" id="L281">        this.worldGoals = world.getWorldGoals();</span>
+<span class="nc" id="L282">        entityImages = new ArrayList&lt;&gt;(initialEntities);</span>
+
+<span class="nc" id="L284">        vampireCastleCardImage = new Image((new File(&quot;src/images/vampire_castle_card.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L285">        zombiePitCardImage = new Image((new File(&quot;src/images/zombie_pit_card.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L286">        towerCardImage = new Image((new File(&quot;src/images/tower_card.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L287">        villageCardImage = new Image((new File(&quot;src/images/village_card.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L288">        barracksCardImage = new Image((new File(&quot;src/images/barracks_card.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L289">        trapCardImage = new Image((new File(&quot;src/images/trap_card.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L290">        campfireCardImage = new Image((new File(&quot;src/images/campfire_card.png&quot;)).toURI().toString());</span>
+
+<span class="nc" id="L292">        vampireCastleImage = new Image(</span>
+<span class="nc" id="L293">                (new File(&quot;src/images/vampire_castle_building_purple_background.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L294">        zombiePitImage = new Image((new File(&quot;src/images/zombie_pit.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L295">        towerImage = new Image((new File(&quot;src/images/tower.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L296">        villageImage = new Image((new File(&quot;src/images/village.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L297">        barracksImage = new Image((new File(&quot;src/images/barracks.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L298">        trapImage = new Image((new File(&quot;src/images/trap.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L299">        campfireImage = new Image((new File(&quot;src/images/campfire.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L300">        herosCastleImage = new Image((new File(&quot;src/images/heros_castle.png&quot;)).toURI().toString());</span>
+
+<span class="nc" id="L302">        swordImage = new Image((new File(&quot;src/images/basic_sword.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L303">        stakeImage = new Image((new File(&quot;src/images/stake.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L304">        staffImage = new Image((new File(&quot;src/images/staff.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L305">        shieldImage = new Image((new File(&quot;src/images/shield.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L306">        armourImage = new Image((new File(&quot;src/images/armour.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L307">        helmetImage = new Image((new File(&quot;src/images/helmet.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L308">        potionImage = new Image((new File(&quot;src/images/brilliant_blue_new.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L309">        oneRingImage = new Image((new File(&quot;src/images/the_one_ring.png&quot;)).toURI().toString());</span>
+
+<span class="nc" id="L311">        slugImage = new Image((new File(&quot;src/images/slug.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L312">        vampireImage = new Image((new File(&quot;src/images/vampire.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L313">        zombieImage = new Image((new File(&quot;src/images/zombie.png&quot;)).toURI().toString());</span>
+
+<span class="nc" id="L315">        goldImage = new Image((new File(&quot;src/images/gold_pile.png&quot;)).toURI().toString());</span>
+
+<span class="nc" id="L317">        allBuildingCardImages = Arrays.asList(vampireCastleCardImage, zombiePitCardImage, towerCardImage,</span>
+                villageCardImage, barracksCardImage, trapCardImage, campfireCardImage);
+<span class="nc" id="L319">        allItemImages = Arrays.asList(swordImage, stakeImage, staffImage, shieldImage, armourImage, helmetImage,</span>
+                potionImage, oneRingImage);
+<span class="nc" id="L321">        allPlacedBuildingImages = Arrays.asList(vampireCastleImage, zombiePitImage, towerImage, villageImage,</span>
+                barracksImage, trapImage, campfireImage, herosCastleImage);
+<span class="nc" id="L323">        allEnemyImages = Arrays.asList(slugImage, zombieImage, vampireImage);</span>
+
+<span class="nc" id="L325">        currentlyDraggedImage = null;</span>
+<span class="nc" id="L326">        currentlyDraggedType = null;</span>
+
+        // initialize them all...
+<span class="nc" id="L329">        gridPaneSetOnDragDropped = new EnumMap&lt;DRAGGABLE_TYPE, EventHandler&lt;DragEvent&gt;&gt;(DRAGGABLE_TYPE.class);</span>
+<span class="nc" id="L330">        anchorPaneRootSetOnDragOver = new EnumMap&lt;DRAGGABLE_TYPE, EventHandler&lt;DragEvent&gt;&gt;(DRAGGABLE_TYPE.class);</span>
+<span class="nc" id="L331">        anchorPaneRootSetOnDragDropped = new EnumMap&lt;DRAGGABLE_TYPE, EventHandler&lt;DragEvent&gt;&gt;(DRAGGABLE_TYPE.class);</span>
+<span class="nc" id="L332">        gridPaneNodeSetOnDragEntered = new EnumMap&lt;DRAGGABLE_TYPE, EventHandler&lt;DragEvent&gt;&gt;(DRAGGABLE_TYPE.class);</span>
+<span class="nc" id="L333">        gridPaneNodeSetOnDragExited = new EnumMap&lt;DRAGGABLE_TYPE, EventHandler&lt;DragEvent&gt;&gt;(DRAGGABLE_TYPE.class);</span>
+<span class="nc" id="L334">    }</span>
+
+    @FXML
+    public void initialize() {
+
+<span class="nc" id="L339">        Image pathTilesImage = new Image((new File(&quot;src/images/32x32GrassAndDirtPath.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L340">        Image inventorySlotImage = new Image((new File(&quot;src/images/empty_slot.png&quot;)).toURI().toString());</span>
+<span class="nc" id="L341">        Rectangle2D imagePart = new Rectangle2D(0, 0, 32, 32);</span>
+
+        // Add the ground first so it is below all other entities (inculding all the
+        // twists and turns)
+<span class="nc bnc" id="L345" title="All 2 branches missed.">        for (int x = 0; x &lt; world.getWidth(); x++) {</span>
+<span class="nc bnc" id="L346" title="All 2 branches missed.">            for (int y = 0; y &lt; world.getHeight(); y++) {</span>
+<span class="nc" id="L347">                ImageView groundView = new ImageView(pathTilesImage);</span>
+<span class="nc" id="L348">                groundView.setViewport(imagePart);</span>
+<span class="nc" id="L349">                squares.add(groundView, x, y);</span>
+            }
+        }
+
+        // load entities loaded from the file in the loader into the squares gridpane
+<span class="nc bnc" id="L354" title="All 2 branches missed.">        for (ImageView entity : entityImages) {</span>
+<span class="nc" id="L355">            squares.getChildren().add(entity);</span>
+<span class="nc" id="L356">        }</span>
+
+        // add the ground underneath the cards
+<span class="nc bnc" id="L359" title="All 2 branches missed.">        for (int x = 0; x &lt; world.getWidth(); x++) {</span>
+<span class="nc" id="L360">            ImageView groundView = new ImageView(pathTilesImage);</span>
+<span class="nc" id="L361">            groundView.setViewport(imagePart);</span>
+<span class="nc" id="L362">            cards.add(groundView, x, 0);</span>
+        }
+
+        // Load the Hero's Castle
+<span class="nc" id="L366">        HerosCastle herosCastle = new HerosCastle(new SimpleIntegerProperty(world.getCastleX()),</span>
+<span class="nc" id="L367">                new SimpleIntegerProperty(world.getCastleY()));</span>
+<span class="nc" id="L368">        onLoadHerosCastle(herosCastle);</span>
+<span class="nc" id="L369">        world.getBuildingEntities().add(herosCastle);</span>
+
+        // add the empty slot images for the unequipped inventory
+<span class="nc bnc" id="L372" title="All 2 branches missed.">        for (int x = 0; x &lt; LoopManiaWorld.unequippedInventoryWidth; x++) {</span>
+<span class="nc bnc" id="L373" title="All 2 branches missed.">            for (int y = 0; y &lt; LoopManiaWorld.unequippedInventoryHeight; y++) {</span>
+<span class="nc" id="L374">                ImageView emptySlotView = new ImageView(inventorySlotImage);</span>
+<span class="nc" id="L375">                unequippedInventory.add(emptySlotView, x, y);</span>
+            }
+        }
+
+        // create the draggable icon
+<span class="nc" id="L380">        draggedEntity = new DragIcon();</span>
+<span class="nc" id="L381">        draggedEntity.setVisible(false);</span>
+<span class="nc" id="L382">        draggedEntity.setOpacity(0.7);</span>
+<span class="nc" id="L383">        anchorPaneRoot.getChildren().add(draggedEntity);</span>
+
+<span class="nc" id="L385">        gameOverScreen.setVisible(false);</span>
+<span class="nc" id="L386">        gameSuccessScreen.setVisible(false);</span>
+
+        // bind the labels to the characters stats
+<span class="nc" id="L389">        healthLabel.textProperty().bind(Bindings.convert(statistics.HealthValueProperty()));</span>
+<span class="nc" id="L390">        goldLabel.textProperty().bind(Bindings.convert(statistics.goldValueProperty()));</span>
+<span class="nc" id="L391">        expLabel.textProperty().bind(Bindings.convert(statistics.expValueProperty()));</span>
+<span class="nc" id="L392">        alliesLabel.textProperty().bind(Bindings.convert(character.alliesNumValueProperty()));</span>
+<span class="nc" id="L393">        loopsLabel.textProperty().bind(Bindings.convert(world.LoopsValueProperty()));</span>
+<span class="nc" id="L394">        attackLabel.textProperty().bind(Bindings.convert(statistics.attackValueProperty()));</span>
+<span class="nc" id="L395">        defenseLabel.textProperty().bind(Bindings.convert(statistics.defenseValueProperty()));</span>
+
+<span class="nc" id="L397">        requiredGoldLabel.textProperty().bind(Bindings.convert(worldGoals.ANDGoldValueProperty()));</span>
+<span class="nc" id="L398">        requiredExpLabel.textProperty().bind(Bindings.convert(worldGoals.ANDExpValueProperty()));</span>
+<span class="nc" id="L399">        requiredLoopsLabel.textProperty().bind(Bindings.convert(worldGoals.ANDLoopsValueProperty()));</span>
+
+<span class="nc" id="L401">        optionalGoldLabel.textProperty().bind(Bindings.convert(worldGoals.ORGoldValueProperty()));</span>
+<span class="nc" id="L402">        optionalExpLabel.textProperty().bind(Bindings.convert(worldGoals.ORExpValueProperty()));</span>
+<span class="nc" id="L403">        optionalLoopsLabel.textProperty().bind(Bindings.convert(worldGoals.ORLoopsValueProperty()));</span>
+
+<span class="nc" id="L405">    }</span>
+
+    /**
+     * create and run the timer
+     */
+    public void startTimer() {
+        // TODO = handle more aspects of the behaviour required by the specification
+<span class="nc" id="L412">        System.out.println(&quot;starting timer&quot;);</span>
+<span class="nc" id="L413">        isPaused = false;</span>
+        // trigger adding code to process main game logic to queue. JavaFX will target
+        // framerate of 0.3 seconds
+<span class="nc" id="L416">        timeline = new Timeline(new KeyFrame(Duration.seconds(0.3), event -&gt; {</span>
+<span class="nc" id="L417">            world.runTickMoves();</span>
+<span class="nc" id="L418">            loadCard();</span>
+<span class="nc" id="L419">            loadItem();</span>
+<span class="nc" id="L420">            List&lt;Enemy&gt; defeatedEnemies = world.runBattles();</span>
+
+<span class="nc bnc" id="L422" title="All 2 branches missed.">            if (world.isInShop()) {</span>
+<span class="nc" id="L423">                switchToShop();</span>
+
+<span class="nc bnc" id="L425" title="All 2 branches missed.">                if (!world.getShop().isShopping()) {</span>
+<span class="nc" id="L426">                    world.setInShop(false);</span>
+                }
+            }
+
+<span class="nc bnc" id="L430" title="All 2 branches missed.">            if (world.isGameOver()) {</span>
+<span class="nc" id="L431">                gameOverScreen.setVisible(true);</span>
+<span class="nc" id="L432">                terminate();</span>
+                // TODO - swap this for triggering the switch to the GameOverScreen
+                // System.out.println(&quot;GAME OVER&quot;);
+            }
+
+<span class="nc bnc" id="L437" title="All 2 branches missed.">            if (world.isGameWon()) {</span>
+<span class="nc" id="L438">                gameSuccessScreen.setVisible(true);</span>
+<span class="nc" id="L439">                terminate();</span>
+                // TODO - swap this for triggering the switch to the GameWonScreen
+                // System.out.println(&quot;CONGRATULATIONS - GAME WON&quot;);
+            }
+
+<span class="nc bnc" id="L444" title="All 2 branches missed.">            for (Enemy e : defeatedEnemies) {</span>
+<span class="nc" id="L445">                reactToEnemyDefeat(e);</span>
+<span class="nc" id="L446">            }</span>
+<span class="nc" id="L447">            List&lt;Enemy&gt; newEnemies = world.possiblySpawnEnemies();</span>
+<span class="nc bnc" id="L448" title="All 2 branches missed.">            for (Enemy newEnemy : newEnemies) {</span>
+<span class="nc" id="L449">                onLoad(newEnemy);</span>
+<span class="nc" id="L450">            }</span>
+<span class="nc" id="L451">            Gold gold = world.possiblySpawnGold();</span>
+<span class="nc bnc" id="L452" title="All 2 branches missed.">            if (gold != null) {</span>
+<span class="nc" id="L453">                onLoadGold(gold);</span>
+            }
+<span class="nc" id="L455">            printThreadingNotes(&quot;HANDLED TIMER&quot;);</span>
+<span class="nc" id="L456">        }));</span>
+<span class="nc" id="L457">        timeline.setCycleCount(Animation.INDEFINITE);</span>
+<span class="nc" id="L458">        timeline.play();</span>
+<span class="nc" id="L459">    }</span>
+
+    private void onLoadGold(Gold gold) {
+<span class="nc" id="L462">        ImageView view = new ImageView(goldImage);</span>
+<span class="nc" id="L463">        addEntity(gold, view);</span>
+<span class="nc" id="L464">        squares.getChildren().add(view);</span>
+<span class="nc" id="L465">    }</span>
+
+    /**
+     * pause the execution of the game loop the human player can still drag and drop
+     * items during the game pause
+     */
+    public void pause() {
+<span class="nc" id="L472">        isPaused = true;</span>
+<span class="nc" id="L473">        System.out.println(&quot;pausing&quot;);</span>
+<span class="nc" id="L474">        timeline.stop();</span>
+<span class="nc" id="L475">    }</span>
+
+    public void terminate() {
+<span class="nc" id="L478">        pause();</span>
+<span class="nc" id="L479">    }</span>
+
+    /**
+     * pair the entity an view so that the view copies the movements of the entity.
+     * add view to list of entity images
+     * 
+     * @param entity backend entity to be paired with view
+     * @param view   frontend imageview to be paired with backend entity
+     */
+    private void addEntity(Entity entity, ImageView view) {
+<span class="nc" id="L489">        trackPosition(entity, view);</span>
+<span class="nc" id="L490">        entityImages.add(view);</span>
+<span class="nc" id="L491">    }</span>
+
+    private void loadCard() {
+<span class="nc" id="L494">        List&lt;Card&gt; cards = world.getCardEntities();</span>
+<span class="nc bnc" id="L495" title="All 2 branches missed.">        for (Card c : cards) {</span>
+<span class="nc bnc" id="L496" title="All 2 branches missed.">            if (c != null) {</span>
+<span class="nc" id="L497">                onLoadCard(c);</span>
+            }
+<span class="nc" id="L499">        }</span>
+<span class="nc" id="L500">    }</span>
+
+    private void loadItem() {
+<span class="nc" id="L503">        List&lt;Item&gt; items = world.getUnequippedInventoryItems();</span>
+<span class="nc bnc" id="L504" title="All 2 branches missed.">        for (Item i : items) {</span>
+<span class="nc bnc" id="L505" title="All 2 branches missed.">            if (i != null) {</span>
+<span class="nc" id="L506">                onLoadItem(i);</span>
+            }
+<span class="nc" id="L508">        }</span>
+<span class="nc" id="L509">    }</span>
+
+    /**
+     * run GUI events after an enemy is defeated, such as spawning
+     * items/experience/gold
+     * 
+     * @param enemy defeated enemy for which we should react to the death of
+     */
+    private void reactToEnemyDefeat(Enemy enemy) {
+        // react to character defeating an enemy
+        // in starter code, spawning extra card/weapon...
+        // TODO = provide different benefits to defeating the enemy based on the type of
+        // enemy
+<span class="nc" id="L522">        world.loadCard(-1);</span>
+<span class="nc" id="L523">        world.addUnequippedItem(-1);</span>
+<span class="nc" id="L524">    }</span>
+
+    private void onLoadCard(Card card) {
+<span class="nc" id="L527">        ImageSelector imageSelector = new ImageSelector();</span>
+<span class="nc" id="L528">        Image image = imageSelector.getImage(card, allBuildingCardImages);</span>
+<span class="nc" id="L529">        ImageView view = new ImageView(image);</span>
+<span class="nc" id="L530">        addDragEventHandlers(view, DRAGGABLE_TYPE.CARD, cards, squares);</span>
+<span class="nc" id="L531">        addEntity(card, view);</span>
+<span class="nc" id="L532">        cards.getChildren().add(view);</span>
+<span class="nc" id="L533">    }</span>
+
+    private void onLoadItem(Item item) {
+<span class="nc" id="L536">        ImageSelector imageSelector = new ImageSelector();</span>
+<span class="nc" id="L537">        Image image = imageSelector.getImage(item, allItemImages);</span>
+<span class="nc" id="L538">        ImageView view = new ImageView(image);</span>
+<span class="nc" id="L539">        addDragEventHandlers(view, DRAGGABLE_TYPE.ITEM, unequippedInventory, equippedItems);</span>
+<span class="nc" id="L540">        addEntity(item, view);</span>
+<span class="nc" id="L541">        unequippedInventory.getChildren().add(view);</span>
+<span class="nc" id="L542">    }</span>
+
+    /**
+     * load an enemy into the GUI
+     * 
+     * @param enemy
+     */
+    private void onLoad(Enemy enemy) {
+<span class="nc" id="L550">        ImageSelector imageSelector = new ImageSelector();</span>
+<span class="nc" id="L551">        Image image = imageSelector.getImage(enemy, allEnemyImages);</span>
+<span class="nc" id="L552">        ImageView view = new ImageView(image);</span>
+<span class="nc" id="L553">        addEntity(enemy, view);</span>
+<span class="nc" id="L554">        squares.getChildren().add(view);</span>
+<span class="nc" id="L555">    }</span>
+
+    private void onLoadBuilding(Building building) {
+<span class="nc" id="L558">        ImageSelector imageSelector = new ImageSelector();</span>
+<span class="nc" id="L559">        Image image = imageSelector.getImage(building, allPlacedBuildingImages);</span>
+<span class="nc" id="L560">        ImageView view = new ImageView(image);</span>
+<span class="nc" id="L561">        addEntity(building, view);</span>
+<span class="nc" id="L562">        squares.getChildren().add(view);</span>
+<span class="nc" id="L563">    }</span>
+
+    private void onLoadHerosCastle(Building building) {
+<span class="nc" id="L566">        ImageView view = new ImageView(herosCastleImage);</span>
+<span class="nc" id="L567">        addEntity(building, view);</span>
+<span class="nc" id="L568">        squares.getChildren().add(view);</span>
+<span class="nc" id="L569">    }</span>
+
+    /**
+     * add drag event handlers for dropping into gridpanes, dragging over the
+     * background, dropping over the background. These are not attached to invidual
+     * items such as swords/cards.
+     * 
+     * @param draggableType  the type being dragged - card or item
+     * @param sourceGridPane the gridpane being dragged from
+     * @param targetGridPane the gridpane the human player should be dragging to
+     *                       (but we of course cannot guarantee they will do so)
+     */
+    private void buildNonEntityDragHandlers(DRAGGABLE_TYPE draggableType, GridPane sourceGridPane,
+            GridPane targetGridPane) {
+<span class="nc" id="L583">        gridPaneSetOnDragDropped.put(draggableType, new EventHandler&lt;DragEvent&gt;() {</span>
+            public void handle(DragEvent event) {
+<span class="nc bnc" id="L585" title="All 2 branches missed.">                if (currentlyDraggedType == draggableType) {</span>
+<span class="nc" id="L586">                    Dragboard db = event.getDragboard();</span>
+<span class="nc" id="L587">                    Node node = event.getPickResult().getIntersectedNode();</span>
+<span class="nc bnc" id="L588" title="All 4 branches missed.">                    if (node != targetGridPane &amp;&amp; db.hasImage()) {</span>
+
+<span class="nc" id="L590">                        Integer cIndex = GridPane.getColumnIndex(node);</span>
+<span class="nc" id="L591">                        Integer rIndex = GridPane.getRowIndex(node);</span>
+<span class="nc bnc" id="L592" title="All 2 branches missed.">                        int x = cIndex == null ? 0 : cIndex;</span>
+<span class="nc bnc" id="L593" title="All 2 branches missed.">                        int y = rIndex == null ? 0 : rIndex;</span>
+                        // Places at 0,0 - will need to take coordinates once that is implemented
+<span class="nc" id="L595">                        ImageView image = new ImageView(db.getImage());</span>
+<span class="nc" id="L596">                        int nodeX = GridPane.getColumnIndex(currentlyDraggedImage);</span>
+<span class="nc" id="L597">                        int nodeY = GridPane.getRowIndex(currentlyDraggedImage);</span>
+<span class="nc bnc" id="L598" title="All 3 branches missed.">                        switch (draggableType) {</span>
+                            case CARD:
+<span class="nc" id="L600">                                removeDraggableDragEventHandlers(draggableType, targetGridPane);</span>
+<span class="nc" id="L601">                                Building newBuilding = convertCardToBuildingByCoordinates(nodeX, nodeY, x, y);</span>
+<span class="nc bnc" id="L602" title="All 2 branches missed.">                                if (newBuilding != null) {</span>
+<span class="nc" id="L603">                                    onLoadBuilding(newBuilding);</span>
+                                } else {
+                                    // Removes transparent image upon placing the building
+<span class="nc" id="L606">                                    node.setOpacity(1);</span>
+<span class="nc" id="L607">                                    Card card = world.getCard(nodeX, nodeY);</span>
+<span class="nc" id="L608">                                    onLoadCard(card);</span>
+                                }
+<span class="nc" id="L610">                                break;</span>
+                            case ITEM:
+<span class="nc" id="L612">                                removeDraggableDragEventHandlers(draggableType, targetGridPane);</span>
+<span class="nc" id="L613">                                System.out.println(&quot;Nodes : &quot; + nodeX + &quot;,&quot; + nodeY);</span>
+<span class="nc" id="L614">                                System.out.println(&quot;Coords : &quot; + x + &quot;,&quot; + y);</span>
+<span class="nc" id="L615">                                Item item = convertCardToItemByCoordinates(nodeX, nodeY, x, y);</span>
+<span class="nc bnc" id="L616" title="All 2 branches missed.">                                if (item != null) {</span>
+<span class="nc" id="L617">                                    removeItemByCoordinates(nodeX, nodeY);</span>
+<span class="nc" id="L618">                                    targetGridPane.add(image, x, y, 1, 1);</span>
+                                } else {
+<span class="nc" id="L620">                                    node.setOpacity(1);</span>
+<span class="nc" id="L621">                                    item = world.getItem(nodeX, nodeY);</span>
+<span class="nc" id="L622">                                    onLoadItem(item);</span>
+                                }
+<span class="nc" id="L624">                                break;</span>
+                            default:
+                                break;
+                        }
+                        // The transparent image is set to false
+<span class="nc" id="L629">                        draggedEntity.setVisible(false);</span>
+<span class="nc" id="L630">                        draggedEntity.setMouseTransparent(false);</span>
+                        // remove drag event handlers before setting currently dragged image to null
+<span class="nc" id="L632">                        currentlyDraggedImage = null;</span>
+<span class="nc" id="L633">                        currentlyDraggedType = null;</span>
+<span class="nc" id="L634">                        printThreadingNotes(&quot;DRAG DROPPED ON GRIDPANE HANDLED&quot;);</span>
+                    }
+                }
+<span class="nc" id="L637">                event.setDropCompleted(true);</span>
+                // consuming prevents the propagation of the event to the anchorPaneRoot (as a
+                // sub-node of anchorPaneRoot, GridPane is prioritized)
+                // https://openjfx.io/javadoc/11/javafx.base/javafx/event/Event.html#consume()
+                // to understand this in full detail, ask your tutor or read
+                // https://docs.oracle.com/javase/8/javafx/events-tutorial/processing.htm
+<span class="nc" id="L643">                event.consume();</span>
+<span class="nc" id="L644">            }</span>
+        });
+
+        // this doesn't fire when we drag over GridPane because in the event handler for
+        // dragging over GridPanes, we consume the event
+<span class="nc" id="L649">        anchorPaneRootSetOnDragOver.put(draggableType, new EventHandler&lt;DragEvent&gt;() {</span>
+            // https://github.com/joelgraff/java_fx_node_link_demo/blob/master/Draggable_Node/DraggableNodeDemo/src/application/RootLayout.java#L110
+            @Override
+            public void handle(DragEvent event) {
+<span class="nc bnc" id="L653" title="All 2 branches missed.">                if (currentlyDraggedType == draggableType) {</span>
+<span class="nc bnc" id="L654" title="All 4 branches missed.">                    if (event.getGestureSource() != anchorPaneRoot &amp;&amp; event.getDragboard().hasImage()) {</span>
+<span class="nc" id="L655">                        event.acceptTransferModes(TransferMode.MOVE);</span>
+                    }
+                }
+<span class="nc bnc" id="L658" title="All 2 branches missed.">                if (currentlyDraggedType != null) {</span>
+<span class="nc" id="L659">                    draggedEntity.relocateToPoint(new Point2D(event.getSceneX(), event.getSceneY()));</span>
+                }
+<span class="nc" id="L661">                event.consume();</span>
+<span class="nc" id="L662">            }</span>
+        });
+
+        // this doesn't fire when we drop over GridPane because in the event handler for
+        // dropping over GridPanes, we consume the event
+<span class="nc" id="L667">        anchorPaneRootSetOnDragDropped.put(draggableType, new EventHandler&lt;DragEvent&gt;() {</span>
+            public void handle(DragEvent event) {
+<span class="nc bnc" id="L669" title="All 2 branches missed.">                if (currentlyDraggedType == draggableType) {</span>
+                    // Data dropped
+                    // If there is an image on the dragboard, read it and use it
+<span class="nc" id="L672">                    Dragboard db = event.getDragboard();</span>
+<span class="nc" id="L673">                    Node node = event.getPickResult().getIntersectedNode();</span>
+<span class="nc bnc" id="L674" title="All 4 branches missed.">                    if (node != anchorPaneRoot &amp;&amp; db.hasImage()) {</span>
+                        // Places at 0,0 - will need to take coordinates once that is implemented
+<span class="nc" id="L676">                        currentlyDraggedImage.setVisible(true);</span>
+<span class="nc" id="L677">                        draggedEntity.setVisible(false);</span>
+<span class="nc" id="L678">                        draggedEntity.setMouseTransparent(false);</span>
+                        // remove drag event handlers before setting currently dragged image to null
+<span class="nc" id="L680">                        removeDraggableDragEventHandlers(draggableType, targetGridPane);</span>
+
+<span class="nc" id="L682">                        currentlyDraggedImage = null;</span>
+<span class="nc" id="L683">                        currentlyDraggedType = null;</span>
+                    }
+                }
+                // let the source know whether the image was successfully transferred and used
+<span class="nc" id="L687">                event.setDropCompleted(true);</span>
+<span class="nc" id="L688">                event.consume();</span>
+<span class="nc" id="L689">            }</span>
+        });
+<span class="nc" id="L691">    }</span>
+
+    /**
+     * remove the card from the world, and spawn and return a building instead where
+     * the card was dropped
+     * 
+     * @param cardNodeX     the x coordinate of the card which was dragged, from 0
+     *                      to width-1
+     * @param cardNodeY     the y coordinate of the card which was dragged (in
+     *                      starter code this is 0 as only 1 row of cards)
+     * @param buildingNodeX the x coordinate of the drop location for the card,
+     *                      where the building will spawn, from 0 to width-1
+     * @param buildingNodeY the y coordinate of the drop location for the card,
+     *                      where the building will spawn, from 0 to height-1
+     * @return building entity returned from the world
+     */
+    private Building convertCardToBuildingByCoordinates(int cardNodeX, int cardNodeY, int buildingNodeX,
+            int buildingNodeY) {
+<span class="nc" id="L709">        return world.convertCardToBuildingByCoordinates(cardNodeX, cardNodeY, buildingNodeX, buildingNodeY);</span>
+    }
+
+    private Item convertCardToItemByCoordinates(int cardNodeX, int cardNodeY, int x, int y) {
+<span class="nc" id="L713">        return world.convertCardToItemByCoordinates(cardNodeX, cardNodeY, x, y);</span>
+    }
+
+    /**
+     * remove an item from the unequipped inventory by its x and y coordinates in
+     * the unequipped inventory gridpane
+     * 
+     * @param nodeX x coordinate from 0 to unequippedInventoryWidth-1
+     * @param nodeY y coordinate from 0 to unequippedInventoryHeight-1
+     */
+    private void removeItemByCoordinates(int nodeX, int nodeY) {
+<span class="nc" id="L724">        world.removeUnequippedInventoryItemByCoordinates(nodeX, nodeY);</span>
+<span class="nc" id="L725">    }</span>
+
+    /**
+     * add drag event handlers to an ImageView
+     * 
+     * @param view           the view to attach drag event handlers to
+     * @param draggableType  the type of item being dragged - card or item
+     * @param sourceGridPane the relevant gridpane from which the entity would be
+     *                       dragged
+     * @param targetGridPane the relevant gridpane to which the entity would be
+     *                       dragged to
+     */
+    private void addDragEventHandlers(ImageView view, DRAGGABLE_TYPE draggableType, GridPane sourceGridPane,
+            GridPane targetGridPane) {
+<span class="nc" id="L739">        view.setOnDragDetected(new EventHandler&lt;MouseEvent&gt;() {</span>
+            public void handle(MouseEvent event) {
+<span class="nc" id="L741">                currentlyDraggedImage = view; // set image currently being dragged, so squares setOnDragEntered can</span>
+                                              // detect it...
+<span class="nc" id="L743">                currentlyDraggedType = draggableType;</span>
+                // Drag was detected, start drap-and-drop gesture
+                // Allow any transfer node
+<span class="nc" id="L746">                Dragboard db = view.startDragAndDrop(TransferMode.MOVE);</span>
+
+                // Put ImageView on dragboard
+<span class="nc" id="L749">                ClipboardContent cbContent = new ClipboardContent();</span>
+<span class="nc" id="L750">                cbContent.putImage(view.getImage());</span>
+<span class="nc" id="L751">                db.setContent(cbContent);</span>
+<span class="nc" id="L752">                view.setVisible(false);</span>
+
+<span class="nc" id="L754">                buildNonEntityDragHandlers(draggableType, sourceGridPane, targetGridPane);</span>
+<span class="nc" id="L755">                Node node = event.getPickResult().getIntersectedNode();</span>
+<span class="nc" id="L756">                Integer cIndex = GridPane.getColumnIndex(node);</span>
+<span class="nc" id="L757">                Integer rIndex = GridPane.getRowIndex(node);</span>
+<span class="nc bnc" id="L758" title="All 2 branches missed.">                int x = cIndex == null ? 0 : cIndex;</span>
+<span class="nc bnc" id="L759" title="All 2 branches missed.">                int y = rIndex == null ? 0 : rIndex;</span>
+<span class="nc" id="L760">                ImageSelector imageSelector = new ImageSelector();</span>
+<span class="nc" id="L761">                Image image = null;</span>
+<span class="nc" id="L762">                int nodeX = GridPane.getColumnIndex(currentlyDraggedImage);</span>
+<span class="nc" id="L763">                int nodeY = GridPane.getRowIndex(currentlyDraggedImage);</span>
+<span class="nc" id="L764">                draggedEntity.relocateToPoint(new Point2D(event.getSceneX(), event.getSceneY()));</span>
+<span class="nc bnc" id="L765" title="All 3 branches missed.">                switch (draggableType) {</span>
+                    case CARD:
+<span class="nc" id="L767">                        Card card = world.getCard(x, y);</span>
+<span class="nc" id="L768">                        image = imageSelector.getImage(card, allBuildingCardImages);</span>
+<span class="nc" id="L769">                        draggedEntity.setImage(image);</span>
+<span class="nc" id="L770">                        break;</span>
+                    case ITEM:
+<span class="nc" id="L772">                        Item item = world.getItem(nodeX, nodeY);</span>
+<span class="nc" id="L773">                        image = imageSelector.getImage(item, allItemImages);</span>
+
+<span class="nc bnc" id="L775" title="All 4 branches missed.">                        if (item instanceof HealthPotion &amp;&amp; !world.isGameOver()) {</span>
+<span class="nc" id="L776">                            world.usePotion(item);</span>
+                        } else {
+<span class="nc" id="L778">                            draggedEntity.setImage(image);</span>
+                        }
+<span class="nc" id="L780">                        break;</span>
+                    default:
+                        break;
+                }
+
+<span class="nc" id="L785">                draggedEntity.setVisible(true);</span>
+<span class="nc" id="L786">                draggedEntity.setMouseTransparent(true);</span>
+<span class="nc" id="L787">                draggedEntity.toFront();</span>
+
+                // IMPORTANT!!!
+                // to be able to remove event handlers, need to use addEventHandler
+                // https://stackoverflow.com/a/67283792
+<span class="nc" id="L792">                targetGridPane.addEventHandler(DragEvent.DRAG_DROPPED, gridPaneSetOnDragDropped.get(draggableType));</span>
+<span class="nc" id="L793">                anchorPaneRoot.addEventHandler(DragEvent.DRAG_OVER, anchorPaneRootSetOnDragOver.get(draggableType));</span>
+<span class="nc" id="L794">                anchorPaneRoot.addEventHandler(DragEvent.DRAG_DROPPED,</span>
+<span class="nc" id="L795">                        anchorPaneRootSetOnDragDropped.get(draggableType));</span>
+
+<span class="nc bnc" id="L797" title="All 2 branches missed.">                for (Node n : targetGridPane.getChildren()) {</span>
+                    // events for entering and exiting are attached to squares children because that
+                    // impacts opacity change
+                    // these do not affect visibility of original image...
+                    // https://stackoverflow.com/questions/41088095/javafx-drag-and-drop-to-gridpane
+<span class="nc" id="L802">                    gridPaneNodeSetOnDragEntered.put(draggableType, new EventHandler&lt;DragEvent&gt;() {</span>
+                        // TODO = be more selective about whether highlighting changes - if it cannot be
+                        // dropped in the location, the location shouldn't be highlighted!
+                        public void handle(DragEvent event) {
+<span class="nc bnc" id="L806" title="All 2 branches missed.">                            if (currentlyDraggedType == draggableType) {</span>
+                                // The drag-and-drop gesture entered the target
+                                // show the user that it is an actual gesture target
+<span class="nc bnc" id="L809" title="All 4 branches missed.">                                if (event.getGestureSource() != n &amp;&amp; event.getDragboard().hasImage()) {</span>
+<span class="nc" id="L810">                                    n.setOpacity(0.7);</span>
+                                }
+                            }
+<span class="nc" id="L813">                            event.consume();</span>
+<span class="nc" id="L814">                        }</span>
+                    });
+<span class="nc" id="L816">                    gridPaneNodeSetOnDragExited.put(draggableType, new EventHandler&lt;DragEvent&gt;() {</span>
+                        // TODO = since being more selective about whether highlighting changes, you
+                        // could program the game so if the new highlight location is invalid the
+                        // highlighting doesn't change, or leave this as-is
+                        public void handle(DragEvent event) {
+<span class="nc bnc" id="L821" title="All 2 branches missed.">                            if (currentlyDraggedType == draggableType) {</span>
+<span class="nc" id="L822">                                n.setOpacity(1);</span>
+                            }
+
+<span class="nc" id="L825">                            event.consume();</span>
+<span class="nc" id="L826">                        }</span>
+                    });
+<span class="nc" id="L828">                    n.addEventHandler(DragEvent.DRAG_ENTERED, gridPaneNodeSetOnDragEntered.get(draggableType));</span>
+<span class="nc" id="L829">                    n.addEventHandler(DragEvent.DRAG_EXITED, gridPaneNodeSetOnDragExited.get(draggableType));</span>
+<span class="nc" id="L830">                }</span>
+<span class="nc" id="L831">                event.consume();</span>
+<span class="nc" id="L832">            }</span>
+
+        });
+<span class="nc" id="L835">    }</span>
+
+    /**
+     * remove drag event handlers so that we don't process redundant events this is
+     * particularly important for slower machines such as over VLAB.
+     * 
+     * @param draggableType  either cards, or items in unequipped inventory
+     * @param targetGridPane the gridpane to remove the drag event handlers from
+     */
+    private void removeDraggableDragEventHandlers(DRAGGABLE_TYPE draggableType, GridPane targetGridPane) {
+        // remove event handlers from nodes in children squares, from anchorPaneRoot,
+        // and squares
+<span class="nc" id="L847">        targetGridPane.removeEventHandler(DragEvent.DRAG_DROPPED, gridPaneSetOnDragDropped.get(draggableType));</span>
+
+<span class="nc" id="L849">        anchorPaneRoot.removeEventHandler(DragEvent.DRAG_OVER, anchorPaneRootSetOnDragOver.get(draggableType));</span>
+<span class="nc" id="L850">        anchorPaneRoot.removeEventHandler(DragEvent.DRAG_DROPPED, anchorPaneRootSetOnDragDropped.get(draggableType));</span>
+
+<span class="nc bnc" id="L852" title="All 2 branches missed.">        for (Node n : targetGridPane.getChildren()) {</span>
+<span class="nc" id="L853">            n.removeEventHandler(DragEvent.DRAG_ENTERED, gridPaneNodeSetOnDragEntered.get(draggableType));</span>
+<span class="nc" id="L854">            n.removeEventHandler(DragEvent.DRAG_EXITED, gridPaneNodeSetOnDragExited.get(draggableType));</span>
+<span class="nc" id="L855">        }</span>
+<span class="nc" id="L856">    }</span>
+
+    /**
+     * handle the pressing of keyboard keys. Specifically, we should pause when
+     * pressing SPACE
+     * 
+     * @param event some keyboard key press
+     */
+    @FXML
+    public void handleKeyPress(KeyEvent event) {
+<span class="nc bnc" id="L866" title="All 2 branches missed.">        switch (event.getCode()) {</span>
+            case SPACE:
+<span class="nc bnc" id="L868" title="All 2 branches missed.">                if (isPaused) {</span>
+<span class="nc" id="L869">                    startTimer();</span>
+                } else {
+<span class="nc" id="L871">                    pause();</span>
+                }
+<span class="nc" id="L873">                break;</span>
+            default:
+                break;
+        }
+<span class="nc" id="L877">    }</span>
+
+    public void setMainMenuSwitcher(MenuSwitcher mainMenuSwitcher) {
+        // TODO = possibly set other menu switchers
+<span class="nc" id="L881">        this.mainMenuSwitcher = mainMenuSwitcher;</span>
+<span class="nc" id="L882">    }</span>
+
+    public void setShopSwitcher(MenuSwitcher shopSwitcher) {
+<span class="nc" id="L885">        this.shopSwitcher = shopSwitcher;</span>
+<span class="nc" id="L886">    }</span>
+
+    /**
+     * this method is triggered when click button to go to main menu in FXML
+     * 
+     * @throws IOException
+     */
+    @FXML
+    private void switchToMainMenu() throws IOException {
+        // TODO = possibly set other menu switchers
+<span class="nc" id="L896">        pause();</span>
+<span class="nc" id="L897">        mainMenuSwitcher.switchMenu();</span>
+<span class="nc" id="L898">    }</span>
+
+    private void switchToShop() {
+<span class="nc" id="L901">        pause();</span>
+<span class="nc" id="L902">        shopSwitcher.switchMenu();</span>
+<span class="nc" id="L903">    }</span>
+
+    /**
+     * Set a node in a GridPane to have its position track the position of an entity
+     * in the world.
+     *
+     * By connecting the model with the view in this way, the model requires no
+     * knowledge of the view and changes to the position of entities in the model
+     * will automatically be reflected in the view.
+     * 
+     * note that this is put in the controller rather than the loader because we
+     * need to track positions of spawned entities such as enemy or items which
+     * might need to be removed should be tracked here
+     * 
+     * NOTE teardown functions setup here also remove nodes from their GridPane. So
+     * it is vital this is handled in this Controller class
+     * 
+     * @param entity
+     * @param node
+     */
+    private void trackPosition(Entity entity, Node node) {
+        // TODO = tweak this slightly to remove items from the equipped inventory?
+<span class="nc" id="L925">        GridPane.setColumnIndex(node, entity.getX());</span>
+<span class="nc" id="L926">        GridPane.setRowIndex(node, entity.getY());</span>
+
+<span class="nc" id="L928">        ChangeListener&lt;Number&gt; xListener = new ChangeListener&lt;Number&gt;() {</span>
+            @Override
+            public void changed(ObservableValue&lt;? extends Number&gt; observable, Number oldValue, Number newValue) {
+<span class="nc" id="L931">                GridPane.setColumnIndex(node, newValue.intValue());</span>
+<span class="nc" id="L932">            }</span>
+        };
+<span class="nc" id="L934">        ChangeListener&lt;Number&gt; yListener = new ChangeListener&lt;Number&gt;() {</span>
+            @Override
+            public void changed(ObservableValue&lt;? extends Number&gt; observable, Number oldValue, Number newValue) {
+<span class="nc" id="L937">                GridPane.setRowIndex(node, newValue.intValue());</span>
+<span class="nc" id="L938">            }</span>
+        };
+
+        // if need to remove items from the equipped inventory, add code to remove from
+        // equipped inventory gridpane in the .onDetach part
+<span class="nc" id="L943">        ListenerHandle handleX = ListenerHandles.createFor(entity.x(), node)</span>
+<span class="nc" id="L944">                .onAttach((o, l) -&gt; o.addListener(xListener)).onDetach((o, l) -&gt; {</span>
+<span class="nc" id="L945">                    o.removeListener(xListener);</span>
+<span class="nc" id="L946">                    entityImages.remove(node);</span>
+<span class="nc" id="L947">                    squares.getChildren().remove(node);</span>
+<span class="nc" id="L948">                    cards.getChildren().remove(node);</span>
+<span class="nc" id="L949">                    equippedItems.getChildren().remove(node);</span>
+<span class="nc" id="L950">                    unequippedInventory.getChildren().remove(node);</span>
+<span class="nc" id="L951">                }).buildAttached();</span>
+<span class="nc" id="L952">        ListenerHandle handleY = ListenerHandles.createFor(entity.y(), node)</span>
+<span class="nc" id="L953">                .onAttach((o, l) -&gt; o.addListener(yListener)).onDetach((o, l) -&gt; {</span>
+<span class="nc" id="L954">                    o.removeListener(yListener);</span>
+<span class="nc" id="L955">                    entityImages.remove(node);</span>
+<span class="nc" id="L956">                    squares.getChildren().remove(node);</span>
+<span class="nc" id="L957">                    cards.getChildren().remove(node);</span>
+<span class="nc" id="L958">                    equippedItems.getChildren().remove(node);</span>
+<span class="nc" id="L959">                    unequippedInventory.getChildren().remove(node);</span>
+<span class="nc" id="L960">                }).buildAttached();</span>
+<span class="nc" id="L961">        handleX.attach();</span>
+<span class="nc" id="L962">        handleY.attach();</span>
+
+        // this means that if we change boolean property in an entity tracked from here,
+        // position will stop being tracked
+        // this wont work on character/path entities loaded from loader classes
+<span class="nc" id="L967">        entity.shouldExist().addListener(new ChangeListener&lt;Boolean&gt;() {</span>
+            @Override
+            public void changed(ObservableValue&lt;? extends Boolean&gt; obervable, Boolean oldValue, Boolean newValue) {
+<span class="nc" id="L970">                handleX.detach();</span>
+<span class="nc" id="L971">                handleY.detach();</span>
+<span class="nc" id="L972">            }</span>
+        });
+<span class="nc" id="L974">    }</span>
+
+    /**
+     * we added this method to help with debugging so you could check your code is
+     * running on the application thread. By running everything on the application
+     * thread, you will not need to worry about implementing locks, which is outside
+     * the scope of the course. Always writing code running on the application
+     * thread will make the project easier, as long as you are not running
+     * time-consuming tasks. We recommend only running code on the application
+     * thread, by using Timelines when you want to run multiple processes at once.
+     * EventHandlers will run on the application thread.
+     */
+    private void printThreadingNotes(String currentMethodLabel) {
+        // System.out.println(&quot;\n###########################################&quot;);
+        // System.out.println(&quot;current method = &quot; + currentMethodLabel);
+        // System.out.println(&quot;In application thread? = &quot; +
+        // Platform.isFxApplicationThread());
+        // System.out.println(&quot;Current system time = &quot; +
+        // java.time.LocalDateTime.now().toString().replace('T', ' '));
+<span class="nc" id="L993">    }</span>
+
+    public LoopManiaWorld getLoopManiaWorld() {
+<span class="nc" id="L996">        return world;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

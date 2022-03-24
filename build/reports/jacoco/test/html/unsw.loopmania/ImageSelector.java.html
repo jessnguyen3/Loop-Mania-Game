@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ImageSelector.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">21T2-cs2511-project</a> &gt; <a href="index.source.html" class="el_package">unsw.loopmania</a> &gt; <span class="el_source">ImageSelector.java</span></div><h1>ImageSelector.java</h1><pre class="source lang-java linenums">package unsw.loopmania;
+
+import java.util.List;
+
+import javafx.scene.image.Image;
+
+<span class="nc" id="L7">public class ImageSelector {</span>
+    public Image getImage(Card card, List&lt;Image&gt; allImages) {
+        Image image;
+<span class="nc" id="L10">        String cardType = card.getCardType();</span>
+<span class="nc bnc" id="L11" title="All 8 branches missed.">        switch (cardType) {</span>
+            case &quot;VampireCastleCard&quot;:
+<span class="nc" id="L13">                image = allImages.get(0);</span>
+<span class="nc" id="L14">                return image;</span>
+            case &quot;ZombiePitCard&quot;:
+<span class="nc" id="L16">                image = allImages.get(1);</span>
+<span class="nc" id="L17">                return image;</span>
+            case &quot;TowerCard&quot;:
+<span class="nc" id="L19">                image = allImages.get(2);</span>
+<span class="nc" id="L20">                return image;</span>
+            case &quot;VillageCard&quot;:
+<span class="nc" id="L22">                image = allImages.get(3);</span>
+<span class="nc" id="L23">                return image;</span>
+            case &quot;BarracksCard&quot;:
+<span class="nc" id="L25">                image = allImages.get(4);</span>
+<span class="nc" id="L26">                return image;</span>
+            case &quot;TrapCard&quot;:
+<span class="nc" id="L28">                image = allImages.get(5);</span>
+<span class="nc" id="L29">                return image;</span>
+            case &quot;CampfireCard&quot;:
+<span class="nc" id="L31">                image = allImages.get(6);</span>
+<span class="nc" id="L32">                return image;</span>
+        }
+<span class="nc" id="L34">        return null;</span>
+    }
+
+    public Image getImage(Building building, List&lt;Image&gt; allImages) {
+        Image image;
+<span class="nc" id="L39">        String buildingType = building.getType();</span>
+<span class="nc bnc" id="L40" title="All 8 branches missed.">        switch (buildingType) {</span>
+            case &quot;VampireCastle&quot;:
+<span class="nc" id="L42">                image = allImages.get(0);</span>
+<span class="nc" id="L43">                return image;</span>
+            case &quot;ZombiePit&quot;:
+<span class="nc" id="L45">                image = allImages.get(1);</span>
+<span class="nc" id="L46">                return image;</span>
+            case &quot;Tower&quot;:
+<span class="nc" id="L48">                image = allImages.get(2);</span>
+<span class="nc" id="L49">                return image;</span>
+            case &quot;Village&quot;:
+<span class="nc" id="L51">                image = allImages.get(3);</span>
+<span class="nc" id="L52">                return image;</span>
+            case &quot;Barracks&quot;:
+<span class="nc" id="L54">                image = allImages.get(4);</span>
+<span class="nc" id="L55">                return image;</span>
+            case &quot;Trap&quot;:
+<span class="nc" id="L57">                image = allImages.get(5);</span>
+<span class="nc" id="L58">                return image;</span>
+            case &quot;Campfire&quot;:
+<span class="nc" id="L60">                image = allImages.get(6);</span>
+<span class="nc" id="L61">                return image;</span>
+        }
+<span class="nc" id="L63">        return null;</span>
+    }
+
+    public Image getImage(Item item, List&lt;Image&gt; allImages) {
+        Image image;
+<span class="nc" id="L68">        String itemType = item.getType();</span>
+<span class="nc bnc" id="L69" title="All 9 branches missed.">        switch (itemType) {</span>
+            case &quot;Sword&quot;:
+<span class="nc" id="L71">                image = allImages.get(0);</span>
+<span class="nc" id="L72">                return image;</span>
+            case &quot;Stake&quot;:
+<span class="nc" id="L74">                image = allImages.get(1);</span>
+<span class="nc" id="L75">                return image;</span>
+            case &quot;Staff&quot;:
+<span class="nc" id="L77">                image = allImages.get(2);</span>
+<span class="nc" id="L78">                return image;</span>
+            case &quot;Shield&quot;:
+<span class="nc" id="L80">                image = allImages.get(3);</span>
+<span class="nc" id="L81">                return image;</span>
+            case &quot;Armour&quot;:
+<span class="nc" id="L83">                image = allImages.get(4);</span>
+<span class="nc" id="L84">                return image;</span>
+            case &quot;Helmet&quot;:
+<span class="nc" id="L86">                image = allImages.get(5);</span>
+<span class="nc" id="L87">                return image;</span>
+            case &quot;HealthPotion&quot;:
+<span class="nc" id="L89">                image = allImages.get(6);</span>
+<span class="nc" id="L90">                return image;</span>
+            case &quot;OneRing&quot;:
+<span class="nc" id="L92">                image = allImages.get(7);</span>
+<span class="nc" id="L93">                return image;</span>
+        }
+<span class="nc" id="L95">        return null;</span>
+    }
+
+    public Image getImage(Enemy enemy, List&lt;Image&gt; allImages) {
+        Image image;
+<span class="nc" id="L100">        String enemyType = enemy.getType();</span>
+<span class="nc bnc" id="L101" title="All 4 branches missed.">        switch (enemyType) {</span>
+            case &quot;Slug&quot;:
+<span class="nc" id="L103">                image = allImages.get(0);</span>
+<span class="nc" id="L104">                return image;</span>
+            case &quot;Zombie&quot;:
+<span class="nc" id="L106">                image = allImages.get(1);</span>
+<span class="nc" id="L107">                return image;</span>
+            case &quot;Vampire&quot;:
+<span class="nc" id="L109">                image = allImages.get(2);</span>
+<span class="nc" id="L110">                return image;</span>
+        }
+<span class="nc" id="L112">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

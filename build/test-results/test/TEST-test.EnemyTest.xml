@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="test.EnemyTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2021-07-19T00:01:14" hostname="vx7" time="0.01">
+  <properties/>
+  <testcase name="zombieMovementTest" classname="test.EnemyTest" time="0.001"/>
+  <testcase name="vampireMovementTest" classname="test.EnemyTest" time="0.001"/>
+  <testcase name="vampireBackwardsMovementTest" classname="test.EnemyTest" time="0.007"/>
+  <testcase name="slugMovementTest" classname="test.EnemyTest" time="0.0"/>
+  <system-out><![CDATA[{"path":["RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"path":["RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+CampfireCard
+5
+-1
+Building on path: false
+Building next to path: true
+Spawned a vampire
+{"path":["RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

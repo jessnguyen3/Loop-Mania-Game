@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Tower.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">21T2-cs2511-project</a> &gt; <a href="index.source.html" class="el_package">unsw.loopmania</a> &gt; <span class="el_source">Tower.java</span></div><h1>Tower.java</h1><pre class="source lang-java linenums">package unsw.loopmania;
+
+import javafx.beans.property.SimpleIntegerProperty;
+
+/**
+ * Represents a Tower building in the backend game world
+ */
+public class Tower extends Building implements EnemyTriggerBuilding {
+    public Tower(SimpleIntegerProperty x, SimpleIntegerProperty y) {
+<span class="fc" id="L10">        super(x, y);</span>
+<span class="fc" id="L11">        this.type = &quot;Tower&quot;;</span>
+<span class="fc" id="L12">    }</span>
+
+    /**
+     * Perform action on enemy when it enters the tower's radius
+     * 
+     * @param enemy
+     */
+    public boolean performActionOnEnemy(Enemy enemy) {
+<span class="fc" id="L20">        return towerInflictDamage(enemy.getStats());</span>
+    }
+
+    /**
+     * Inflict damage on to the enemy within the tower's radius Return true if the
+     * enemy is killed, false if not.
+     * 
+     * @param statistics
+     */
+    public boolean towerInflictDamage(Statistics statistics) {
+
+<span class="fc" id="L31">        System.out.println(&quot;Before being attacked by the tower, the enemy has health &quot; + statistics.getHealth());</span>
+
+        // Tower kills the enermy
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        if (statistics.getHealth() - 5 &lt;= 0) {</span>
+
+<span class="fc" id="L36">            System.out.println(&quot;The tower killed the enemy!&quot;);</span>
+<span class="fc" id="L37">            return true;</span>
+        }
+
+        // else deal 5 damage
+        else {
+<span class="fc" id="L42">            statistics.setHealth(statistics.getHealth() - 5);</span>
+
+<span class="fc" id="L44">            System.out.println(&quot;An enemy within the radius took damage from the tower and now has health &quot;</span>
+<span class="fc" id="L45">                    + statistics.getHealth());</span>
+
+<span class="fc" id="L47">            return false;</span>
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

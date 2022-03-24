@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Vampire.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">21T2-cs2511-project</a> &gt; <a href="index.source.html" class="el_package">unsw.loopmania</a> &gt; <span class="el_source">Vampire.java</span></div><h1>Vampire.java</h1><pre class="source lang-java linenums">package unsw.loopmania;
+
+import java.util.List;
+import java.util.Random;
+
+public class Vampire extends Enemy {
+<span class="fc" id="L7">    private final String type = &quot;Vampire&quot;;</span>
+    private boolean direction;
+<span class="fc" id="L9">    private final int battleRadius = 3;</span>
+<span class="fc" id="L10">    private final int supportRadius = 5;</span>
+    private int remainingCriticalBites;
+    private int criticalBiteDamage;
+
+    public Vampire(PathPosition position) {
+<span class="fc" id="L15">        super(position, new Statistics(50, 25, 5, 25, 20));</span>
+<span class="fc" id="L16">        direction = true;</span>
+<span class="fc" id="L17">        this.remainingCriticalBites = 0;</span>
+<span class="fc" id="L18">        this.criticalBiteDamage = 0;</span>
+<span class="fc" id="L19">    }</span>
+
+    // Assumption: the vampire can deal a critical bite the first time it attacks
+    // the allied
+    // soldier or character
+
+    /**
+     * Attack takes into account the vampire's critical bite. Attack method reduces
+     * the health of the opponent (which is the allied soldier or character)
+     */
+    @Override
+    public void attack(MovingEntity opponent, List&lt;Item&gt; equippedItems) {
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">        if (opponent instanceof Character) {</span>
+            // inflict additional damage to the vampire if the character
+            // is currently equipping a stake
+<span class="fc" id="L34">            int additionalCharacterAttack = updateAttackToVampire(equippedItems.get(0));</span>
+<span class="fc" id="L35">            additionalCharacterAttack += updateAttackToVampire(equippedItems.get(1));</span>
+<span class="fc" id="L36">            super.setHealth(super.getHealth() - additionalCharacterAttack);</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">            if (super.getHealth() == 0) {</span>
+                // the vampire can no longer attack due to additional damage from stake(s)
+<span class="nc" id="L39">                return;</span>
+            }
+        }
+<span class="fc" id="L42">        this.checkCriticalBites(equippedItems);</span>
+<span class="fc" id="L43">        remainingCriticalBites--; // critical bite will be dealt. Therefore, subtract 1.</span>
+<span class="fc" id="L44">        int attack = super.getAttack();</span>
+<span class="fc" id="L45">        attack = super.updateAttack(attack, equippedItems.get(2));</span>
+<span class="fc" id="L46">        attack = super.updateAttack(attack, equippedItems.get(3));</span>
+<span class="fc" id="L47">        attack += criticalBiteDamage;</span>
+<span class="fc" id="L48">        opponent.reduceHealth(attack);</span>
+<span class="fc" id="L49">    }</span>
+
+    /**
+     * Checks if the character has equipped a stake. If so, it deals additional
+     * damage to the vampire.
+     * 
+     * @param weapon
+     * @return
+     */
+    public int updateAttackToVampire(Item weapon) {
+<span class="fc" id="L59">        int additionalCharacterAttack = 0;</span>
+<span class="pc bpc" id="L60" title="3 of 4 branches missed.">        if (weapon != null &amp;&amp; weapon instanceof Stake) {</span>
+<span class="nc" id="L61">            additionalCharacterAttack += weapon.getIncrease();</span>
+        }
+<span class="fc" id="L63">        return additionalCharacterAttack;</span>
+    }
+
+    /**
+     * Check if the vampire is current dealing critical bites. If not (criticalBites
+     * &lt;= 0), then it randomly determines if the vampire will deal critical bites.
+     * Initially, the chance of a critical bite is 15%.
+     * 
+     * @param equippedItems
+     */
+    public void checkCriticalBites(List&lt;Item&gt; equippedItems) {
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        if (remainingCriticalBites &lt;= 0) {</span>
+            // reset the criticalBiteDamage
+<span class="fc" id="L76">            criticalBiteDamage = 0;</span>
+            // Get the chance the vampire provides a critical bite
+<span class="fc" id="L78">            Random random = new Random();</span>
+<span class="fc" id="L79">            int biteChance = random.nextInt(100);</span>
+            // current chance of a critical bite is 15%
+<span class="fc" id="L81">            int biteChanceRequired = 15;</span>
+<span class="fc" id="L82">            biteChanceRequired = this.getBiteChanceRequired(equippedItems, biteChanceRequired);</span>
+            // 15% chance of inflicting biteChance
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            if (biteChance &lt; biteChanceRequired) {</span>
+<span class="fc" id="L85">                remainingCriticalBites = random.nextInt(5) + 1; // the number of critical bites</span>
+<span class="fc" id="L86">                criticalBiteDamage = random.nextInt(10) + 1; // the extra damage the critical bite inflicts</span>
+            }
+        }
+<span class="fc" id="L89">    }</span>
+
+    /**
+     * Update the current chance of a critical bite depending on whether the
+     * character has equipped armour.
+     * 
+     * @param equippedItems
+     * @param currentBiteChance
+     * @return
+     */
+    public int getBiteChanceRequired(List&lt;Item&gt; equippedItems, int currentBiteChance) {
+<span class="fc" id="L100">        currentBiteChance = this.reducedBiteChance(equippedItems.get(2), currentBiteChance);</span>
+<span class="fc" id="L101">        currentBiteChance = this.reducedBiteChance(equippedItems.get(3), currentBiteChance);</span>
+<span class="fc" id="L102">        return currentBiteChance;</span>
+    }
+
+    /**
+     * if armour is equipped, reduce the chance of a critical bite by 60%.
+     * 
+     * @param equipment
+     * @param currentBiteChance
+     * @return
+     */
+    public int reducedBiteChance(Item equipment, int currentBiteChance) {
+<span class="pc bpc" id="L113" title="3 of 4 branches missed.">        if (equipment != null &amp;&amp; equipment instanceof Armour) {</span>
+            // Armour reduces chance of critical bite by 60%
+<span class="nc" id="L115">            currentBiteChance *= 0.4;</span>
+        }
+<span class="fc" id="L117">        return currentBiteChance;</span>
+    }
+
+    /*
+     * Movement for the Vampire
+     */
+    @Override
+    public void move() {
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        if (direction) {</span>
+<span class="fc" id="L126">            moveUpPath();</span>
+<span class="fc" id="L127">            moveUpPath();</span>
+        } else {
+<span class="fc" id="L129">            moveDownPath();</span>
+<span class="fc" id="L130">            moveDownPath();</span>
+        }
+<span class="fc" id="L132">    }</span>
+
+    /**
+     * getter for type of enemy
+     */
+    public String getType() {
+<span class="fc" id="L138">        return type;</span>
+    }
+
+    /**
+     * getter fir vampire's battle radius
+     */
+    @Override
+    public int getBattleRadius() {
+<span class="fc" id="L146">        return battleRadius;</span>
+    }
+
+    /**
+     * getter for vampire's support radius
+     */
+    @Override
+    public int getSupportRadius() {
+<span class="fc" id="L154">        return supportRadius;</span>
+    }
+
+    /**
+     * Used to reverse vampire's direction when in proximity of a campfire
+     */
+    public void reverseDirection() {
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">        if (direction) {</span>
+<span class="fc" id="L162">            direction = false;</span>
+        } else {
+<span class="nc" id="L164">            direction = true;</span>
+        }
+<span class="fc" id="L166">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

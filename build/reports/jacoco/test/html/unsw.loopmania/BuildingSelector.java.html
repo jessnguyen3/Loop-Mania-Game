@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BuildingSelector.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">21T2-cs2511-project</a> &gt; <a href="index.source.html" class="el_package">unsw.loopmania</a> &gt; <span class="el_source">BuildingSelector.java</span></div><h1>BuildingSelector.java</h1><pre class="source lang-java linenums">package unsw.loopmania;
+
+import javafx.beans.property.SimpleIntegerProperty;
+
+<span class="fc" id="L5">public class BuildingSelector {</span>
+    private static final int CAMPFIRE = 0;
+    private static final int TRAP = 1;
+    private static final int VILLAGE = 2;
+    private static final int ZOMBIEPIT = 3;
+    private static final int VAMPIRECASTLE = 4;
+    private static final int TOWER = 5;
+    private static final int BARRACKS = 6;
+
+    public Building getBuilding(int buildingSelector, SimpleIntegerProperty x, SimpleIntegerProperty y) {
+        Building building;
+<span class="nc bnc" id="L16" title="All 8 branches missed.">        switch (buildingSelector) {</span>
+            case CAMPFIRE:
+<span class="nc" id="L18">                building = new Campfire(x, y);</span>
+<span class="nc" id="L19">                return building;</span>
+
+            case TRAP:
+<span class="nc" id="L22">                building = new Trap(x, y);</span>
+<span class="nc" id="L23">                return building;</span>
+
+            case VILLAGE:
+<span class="nc" id="L26">                building = new Village(x, y);</span>
+<span class="nc" id="L27">                return building;</span>
+
+            case ZOMBIEPIT:
+<span class="nc" id="L30">                building = new ZombiePit(x, y);</span>
+<span class="nc" id="L31">                return building;</span>
+
+            case VAMPIRECASTLE:
+<span class="nc" id="L34">                building = new VampireCastle(x, y);</span>
+<span class="nc" id="L35">                return building;</span>
+
+            case TOWER:
+<span class="nc" id="L38">                building = new Tower(x, y);</span>
+<span class="nc" id="L39">                return building;</span>
+
+            case BARRACKS:
+<span class="nc" id="L42">                building = new Barracks(x, y);</span>
+<span class="nc" id="L43">                return building;</span>
+        }
+
+<span class="nc" id="L46">        return null;</span>
+    }
+
+    public Building getBuilding(String buildingSelector, SimpleIntegerProperty x, SimpleIntegerProperty y,
+            boolean buildingOnPath, boolean buildingNextToPath) {
+        Building building;
+<span class="pc bpc" id="L52" title="1 of 8 branches missed.">        switch (buildingSelector) {</span>
+            case &quot;VampireCastleCard&quot;:
+<span class="pc bpc" id="L54" title="2 of 4 branches missed.">                if (buildingNextToPath &amp;&amp; !buildingOnPath) {</span>
+<span class="fc" id="L55">                    building = new VampireCastle(x, y);</span>
+<span class="fc" id="L56">                    return building;</span>
+                }
+                break;
+            case &quot;ZombiePitCard&quot;:
+<span class="pc bpc" id="L60" title="2 of 4 branches missed.">                if (buildingNextToPath &amp;&amp; !buildingOnPath) {</span>
+<span class="fc" id="L61">                    building = new ZombiePit(x, y);</span>
+<span class="fc" id="L62">                    return building;</span>
+                }
+                break;
+            case &quot;TowerCard&quot;:
+<span class="pc bpc" id="L66" title="2 of 4 branches missed.">                if (buildingNextToPath &amp;&amp; !buildingOnPath) {</span>
+<span class="fc" id="L67">                    building = new Tower(x, y);</span>
+<span class="fc" id="L68">                    return building;</span>
+                }
+                break;
+            case &quot;VillageCard&quot;:
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">                if (buildingOnPath) {</span>
+<span class="fc" id="L73">                    building = new Village(x, y);</span>
+<span class="fc" id="L74">                    return building;</span>
+                }
+                break;
+            case &quot;BarracksCard&quot;:
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">                if (buildingOnPath) {</span>
+<span class="fc" id="L79">                    building = new Barracks(x, y);</span>
+<span class="fc" id="L80">                    return building;</span>
+                }
+                break;
+            case &quot;TrapCard&quot;:
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">                if (buildingOnPath) {</span>
+<span class="fc" id="L85">                    building = new Trap(x, y);</span>
+<span class="fc" id="L86">                    return building;</span>
+                }
+                break;
+            case &quot;CampfireCard&quot;:
+<span class="fc bfc" id="L90" title="All 2 branches covered.">                if (!buildingOnPath) {</span>
+<span class="fc" id="L91">                    building = new Campfire(x, y);</span>
+<span class="fc" id="L92">                    return building;</span>
+                }
+                break;
+        }
+<span class="fc" id="L96">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

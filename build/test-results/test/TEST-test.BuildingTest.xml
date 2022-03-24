@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="test.BuildingTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2021-07-19T00:01:14" hostname="vx7" time="0.084">
+  <properties/>
+  <testcase name="herosCastleTest" classname="test.BuildingTest" time="0.001"/>
+  <testcase name="herosCastleRespawnVampireLoopTest" classname="test.BuildingTest" time="0.02"/>
+  <testcase name="trapDamageTest" classname="test.BuildingTest" time="0.002"/>
+  <testcase name="testSpawningEnemies" classname="test.BuildingTest" time="0.044"/>
+  <testcase name="herosCastleRespawnZombieLoopTest" classname="test.BuildingTest" time="0.001"/>
+  <testcase name="towerAttackTest" classname="test.BuildingTest" time="0.0"/>
+  <testcase name="towerKillTest" classname="test.BuildingTest" time="0.002"/>
+  <testcase name="testHelperBuilding" classname="test.BuildingTest" time="0.005"/>
+  <testcase name="testEnemySpawnPositions" classname="test.BuildingTest" time="0.002"/>
+  <testcase name="herosCastleShopTest" classname="test.BuildingTest" time="0.0"/>
+  <testcase name="vampireInCampfireRadius" classname="test.BuildingTest" time="0.001"/>
+  <testcase name="barracksSpawnAllyTest" classname="test.BuildingTest" time="0.002"/>
+  <testcase name="detectIfEnemyIsOnTrap" classname="test.BuildingTest" time="0.001"/>
+  <system-out><![CDATA[{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+Shop is opened
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+VampireCastleCard
+3
+2
+Building on path: false
+Building next to path: true
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+The enemy stepped on the trap and was killed!
+The trap was destroyed ...
+The enemy stepped on the trap and took some damage!
+The enemy's health is now 25
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+ZombiePitCard
+3
+4
+Building on path: false
+Building next to path: true
+Spawned a Zombie
+VampireCastleCard
+3
+2
+Building on path: false
+Building next to path: true
+Vampire pit building at (3,2)
+Vampire spawned at (3,1)
+Spawned a vampire
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+ZombiePitCard
+3
+4
+Building on path: false
+Building next to path: true
+Spawned a Zombie
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+Spawned a vampire
+CampfireCard
+3
+4
+Building on path: false
+Building next to path: true
+TowerCard
+8
+1
+Building on path: false
+Building next to path: true
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+TowerCard
+3
+0
+Building on path: false
+Building next to path: true
+TowerCard
+4
+2
+Building on path: false
+Building next to path: true
+TowerCard
+3
+2
+Building on path: false
+Building next to path: true
+TowerCard
+2
+2
+Building on path: false
+Building next to path: true
+TowerCard
+3
+0
+Building on path: false
+Building next to path: true
+Before being attacked by the tower, the enemy has health 25
+An enemy within the radius took damage from the tower and now has health 20
+Before being attacked by the tower, the enemy has health 20
+An enemy within the radius took damage from the tower and now has health 15
+Before being attacked by the tower, the enemy has health 15
+An enemy within the radius took damage from the tower and now has health 10
+Before being attacked by the tower, the enemy has health 10
+An enemy within the radius took damage from the tower and now has health 5
+Before being attacked by the tower, the enemy has health 5
+The tower killed the enemy!
+Before being attacked by the tower, the enemy has health 5
+The tower killed the enemy!
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+BarracksCard
+3
+3
+Building on path: true
+Building next to path: true
+VampireCastleCard
+3
+2
+Building on path: false
+Building next to path: true
+ZombiePitCard
+3
+4
+Building on path: false
+Building next to path: true
+VillageCard
+4
+3
+Building on path: true
+Building next to path: true
+TrapCard
+2
+3
+Building on path: true
+Building next to path: true
+CampfireCard
+2
+3
+Building on path: true
+Building next to path: true
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+VampireCastleCard
+3
+2
+Building on path: false
+Building next to path: true
+Vampire pit building at (3,2)
+Vampire spawned at (3,1)
+Spawned a vampire
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+CampfireCard
+4
+2
+Building on path: false
+Building next to path: true
+Spawned a vampire
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+{"path":["RIGHT","RIGHT","DOWN","RIGHT","RIGHT","UP","RIGHT","RIGHT","RIGHT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","LEFT","LEFT","LEFT","UP","UP","RIGHT","UP","UP","UP","UP","LEFT","LEFT","LEFT","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","DOWN","RIGHT","RIGHT","RIGHT","RIGHT","RIGHT","DOWN","DOWN","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","LEFT","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP","UP"],"x":0,"y":0,"type":"path_tile"}
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+TrapCard
+2
+0
+Building on path: true
+Building next to path: true
+The enemy stepped on the trap and was killed!
+The trap was destroyed ...
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

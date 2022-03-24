@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MovingEntity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">21T2-cs2511-project</a> &gt; <a href="index.source.html" class="el_package">unsw.loopmania</a> &gt; <span class="el_source">MovingEntity.java</span></div><h1>MovingEntity.java</h1><pre class="source lang-java linenums">package unsw.loopmania;
+
+import java.util.List;
+
+import javafx.beans.property.SimpleIntegerProperty;
+
+/**
+ * The moving entity
+ */
+public abstract class MovingEntity extends Entity {
+    /**
+     * object holding the statistics of a moving entity
+     */
+    Statistics stats;
+    /**
+     * Determines if the current entity is in a trance
+     */
+    private boolean inTrance;
+    private int numTranceAttacks;
+    /**
+     * object holding position in the path
+     */
+    private PathPosition position;
+
+    /**
+     * Create a moving entity which moves up and down the path in position
+     * 
+     * @param position represents the current position in the path
+     */
+    public MovingEntity(PathPosition position, Statistics stats) {
+<span class="fc" id="L31">        super();</span>
+<span class="fc" id="L32">        this.position = position;</span>
+<span class="fc" id="L33">        this.stats = stats;</span>
+<span class="fc" id="L34">        this.inTrance = false;</span>
+<span class="fc" id="L35">        this.numTranceAttacks = 0;</span>
+<span class="fc" id="L36">    }</span>
+
+    /**
+     * Abstract method: All moving entities require the method move()
+     */
+    public abstract void move();
+
+    /**
+     * move clockwise through the path
+     */
+    public void moveDownPath() {
+<span class="fc" id="L47">        position.moveDownPath();</span>
+<span class="fc" id="L48">    }</span>
+
+    /**
+     * move anticlockwise through the path
+     */
+    public void moveUpPath() {
+<span class="fc" id="L54">        position.moveUpPath();</span>
+<span class="fc" id="L55">    }</span>
+
+    public SimpleIntegerProperty x() {
+<span class="fc" id="L58">        return position.getX();</span>
+    }
+
+    public SimpleIntegerProperty y() {
+<span class="fc" id="L62">        return position.getY();</span>
+    }
+
+    public int getX() {
+<span class="fc" id="L66">        return x().get();</span>
+    }
+
+    public int getY() {
+<span class="fc" id="L70">        return y().get();</span>
+    }
+
+    /**
+     * Getter for the moving entity's statistics
+     * 
+     * @return
+     */
+    public Statistics getStats() {
+<span class="fc" id="L79">        return stats;</span>
+    }
+
+    /**
+     * Getter for moving entity's health
+     * 
+     * @return
+     */
+    public int getHealth() {
+<span class="fc" id="L88">        Statistics stats = this.getStats();</span>
+<span class="fc" id="L89">        return stats.getHealth();</span>
+    }
+
+    /**
+     * Set the entity's attack to a new value
+     * 
+     * @param attack
+     */
+    public void setAttack(int attack) {
+<span class="fc" id="L98">        stats.setAttack(attack);</span>
+<span class="fc" id="L99">    }</span>
+
+    /**
+     * Set the entity's defense to a new value
+     * 
+     * @param defense
+     */
+    public void setDefense(int defense) {
+<span class="fc" id="L107">        stats.setDefense(defense);</span>
+<span class="fc" id="L108">    }</span>
+
+    /**
+     * Getter for moving entity's attack
+     * 
+     * @return
+     */
+    public int getAttack() {
+<span class="fc" id="L116">        Statistics stats = this.getStats();</span>
+<span class="fc" id="L117">        return stats.getAttack();</span>
+    }
+
+    /**
+     * Reduce the entity's health by a given value
+     * 
+     * @param value
+     */
+    public void reduceHealth(int value) {
+<span class="fc" id="L126">        stats.reduceHealth(value);</span>
+<span class="fc" id="L127">    }</span>
+
+    /**
+     * used to set the health of a character
+     * 
+     * @param value
+     */
+    public void setHealth(int value) {
+<span class="fc" id="L135">        stats.setHealth(value);</span>
+<span class="fc" id="L136">    }</span>
+
+    /**
+     * Getter for moving entity's defense
+     * 
+     * @return
+     */
+    public int getDefense() {
+<span class="fc" id="L144">        Statistics stats = this.getStats();</span>
+<span class="fc" id="L145">        return stats.getDefense();</span>
+    }
+
+    /**
+     * Set a moving entity into trance
+     * 
+     * @param inTrance
+     */
+    public void setInTrance(boolean inTrance) {
+<span class="fc" id="L154">        this.inTrance = inTrance;</span>
+<span class="fc" id="L155">    }</span>
+
+    /**
+     * Getter to determine if the moving entity is in trance
+     * 
+     * @return
+     */
+    public boolean getInTrance() {
+<span class="fc" id="L163">        return inTrance;</span>
+    }
+
+    public void setNumTranceAttacks(int numAttacks) {
+<span class="fc" id="L167">        this.numTranceAttacks = numAttacks;</span>
+<span class="fc" id="L168">    }</span>
+
+    public int getNumTranceAttacks() {
+<span class="fc" id="L171">        return numTranceAttacks;</span>
+    }
+
+    /**
+     * Each moving entity must battle against each other.
+     * 
+     * @param opponentStats
+     * @param equippedItems
+     */
+    public abstract void attack(MovingEntity opponent, List&lt;Item&gt; equippedItems);
+
+    /**
+     * Getter for the moving entity's current path position
+     * 
+     * @return
+     */
+    public PathPosition getPathPosition() {
+<span class="fc" id="L188">        return position;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

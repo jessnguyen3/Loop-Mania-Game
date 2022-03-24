@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="test.GoalsTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2021-07-19T00:01:14" hostname="vx7" time="0.005">
+  <properties/>
+  <testcase name="testMAP1Goals" classname="test.GoalsTest" time="0.002"/>
+  <testcase name="testMAP2Goals" classname="test.GoalsTest" time="0.001"/>
+  <testcase name="testGoalsMet" classname="test.GoalsTest" time="0.001"/>
+  <system-out><![CDATA[{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+Mandatory goals
+Loops required: 0
+Experience required: 100
+Gold required: 0
+
+Optional goals
+Loops: 0
+Experience : 123456
+Gold : 1000
+
+{"goal":"experience","quantity":123456}
+Mandatory goals
+Loops required: 0
+Experience required: 123456
+Gold required: 0
+
+Optional goals
+Loops: 0
+Experience : 0
+Gold : 0
+
+{"goal":"AND","subgoals":[{"goal":"experience","quantity":100},{"goal":"OR","subgoals":[{"goal":"experience","quantity":123456},{"goal":"gold","quantity":1000}]}]}
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

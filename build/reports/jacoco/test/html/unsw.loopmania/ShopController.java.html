@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShopController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">21T2-cs2511-project</a> &gt; <a href="index.source.html" class="el_package">unsw.loopmania</a> &gt; <span class="el_source">ShopController.java</span></div><h1>ShopController.java</h1><pre class="source lang-java linenums">package unsw.loopmania;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+
+import javafx.beans.binding.Bindings;
+
+
+public class ShopController {
+    
+    private LoopManiaWorld world;
+
+    private Shop shop;
+
+    private MenuSwitcher gameSwitcher;
+
+    private Character character;
+
+
+<span class="nc" id="L23">    public ShopController(LoopManiaWorld world) {</span>
+<span class="nc" id="L24">        this.world = world;</span>
+<span class="nc" id="L25">        this.shop = world.getShop();</span>
+<span class="nc" id="L26">        this.character = world.getCharacter();</span>
+<span class="nc" id="L27">    }</span>
+    
+    public void setGameSwitcher(MenuSwitcher gameSwitcher){
+<span class="nc" id="L30">        this.gameSwitcher = gameSwitcher;</span>
+<span class="nc" id="L31">    }</span>
+
+<span class="nc" id="L33">    @FXML</span>
+    public Label availableGold = new Label(); 
+
+
+<span class="nc" id="L37">    @FXML</span>
+    public Button minusConsumableButton = new Button();
+<span class="nc" id="L39">    @FXML</span>
+    public Button plusConsumableButton = new Button();
+<span class="nc" id="L41">    @FXML</span>
+    public TextField consumableNumberField = new TextField();
+    
+<span class="nc" id="L44">    @FXML</span>
+    public Label consumableLabel = new Label();
+
+
+<span class="nc" id="L48">    @FXML</span>
+    public Button minusSwordButton = new Button();
+<span class="nc" id="L50">    @FXML</span>
+    public Button plusSwordButton = new Button();
+<span class="nc" id="L52">    @FXML</span>
+    public TextField swordNumberField = new TextField();
+    
+<span class="nc" id="L55">    @FXML</span>
+    public Label swordLabel = new Label();
+
+
+<span class="nc" id="L59">    @FXML</span>
+    public Button minusStakeButton = new Button();
+<span class="nc" id="L61">    @FXML</span>
+    public Button plusStakeutton = new Button();
+<span class="nc" id="L63">    @FXML</span>
+    public TextField stakeNumberField = new TextField(); 
+
+<span class="nc" id="L66">    @FXML Label stakeLabel = new Label();</span>
+
+<span class="nc" id="L68">    @FXML</span>
+    public Button minusStaffButton = new Button();
+<span class="nc" id="L70">    @FXML</span>
+    public Button plusStaffButton = new Button();
+<span class="nc" id="L72">    @FXML</span>
+    public TextField staffNumberField = new TextField(); 
+
+<span class="nc" id="L75">    @FXML</span>
+    public Label staffLabel = new Label();
+
+<span class="nc" id="L78">    @FXML</span>
+    public Button minusHelmetButton = new Button();
+<span class="nc" id="L80">    @FXML</span>
+    public Button plusHelmetButton = new Button();
+<span class="nc" id="L82">    @FXML</span>
+    public TextField helmetNumberField = new TextField(); 
+
+<span class="nc" id="L85">    @FXML</span>
+    public Label helmetLabel = new Label();
+
+<span class="nc" id="L88">    @FXML</span>
+    public Button minusArmourButton = new Button();
+<span class="nc" id="L90">    @FXML</span>
+    public Button plusArmourButton = new Button();
+<span class="nc" id="L92">    @FXML</span>
+    public TextField armourNumberField = new TextField(); 
+
+<span class="nc" id="L95">    @FXML</span>
+    public Label armourLabel = new Label();
+
+
+<span class="nc" id="L99">    @FXML</span>
+    public Button minusShieldButton = new Button();
+<span class="nc" id="L101">    @FXML</span>
+    public Button plusShieldButton = new Button();
+<span class="nc" id="L103">    @FXML</span>
+    public TextField shieldNumberField = new TextField(); 
+
+<span class="nc" id="L106">    @FXML</span>
+    public Label shieldLabel = new Label();
+
+
+<span class="nc" id="L110">    @FXML </span>
+    public Label totalNumberField = new Label(); 
+<span class="nc" id="L112">    @FXML</span>
+    public Button purchaseButton = new Button(); 
+
+
+<span class="nc" id="L116">    @FXML</span>
+    public Label notEnoughGold = new Label(); 
+<span class="nc" id="L118">    @FXML</span>
+    public Label purchaseSuccessful = new Label(); 
+
+
+<span class="nc" id="L122">    @FXML </span>
+    public Button leaveShopButton = new Button(); 
+    
+
+
+
+
+    @FXML 
+    public void handleConsumableMinus(ActionEvent event) { 
+<span class="nc" id="L131">        shop.subtractPotion();</span>
+<span class="nc" id="L132">    }</span>
+
+    @FXML 
+    public void handleConsumablePlus(ActionEvent event) { 
+
+<span class="nc" id="L137">        shop.addPotion();</span>
+<span class="nc" id="L138">    }</span>
+
+
+    @FXML 
+    public void handleSwordMinus(ActionEvent event) {
+
+<span class="nc" id="L144">        shop.subtractSword();</span>
+<span class="nc" id="L145">    }</span>
+
+    @FXML 
+    public void handleSwordPlus(ActionEvent event) {
+
+<span class="nc" id="L150">        shop.addSword();</span>
+<span class="nc" id="L151">    }</span>
+
+    @FXML 
+    public void handleStakeMinus(ActionEvent event) { 
+
+<span class="nc" id="L156">        shop.subtractStake();</span>
+<span class="nc" id="L157">    }</span>
+
+    @FXML 
+    public void handleStakePlus(ActionEvent event) { 
+
+<span class="nc" id="L162">        shop.addStake();</span>
+<span class="nc" id="L163">    }</span>
+
+    @FXML 
+    public void handleStaffMinus(ActionEvent event) { 
+
+<span class="nc" id="L168">        shop.subtractStaff();</span>
+<span class="nc" id="L169">    }</span>
+
+    @FXML 
+    public void handleStaffPlus(ActionEvent event) { 
+
+<span class="nc" id="L174">        shop.addStaff();</span>
+<span class="nc" id="L175">    }</span>
+
+    @FXML 
+    public void handleHelmetMinus(ActionEvent event) { 
+
+<span class="nc" id="L180">        shop.subtractHelmet();</span>
+<span class="nc" id="L181">    }</span>
+
+    @FXML 
+    public void handleHelmetPlus(ActionEvent event) { 
+
+<span class="nc" id="L186">        shop.addHelmet();</span>
+<span class="nc" id="L187">    }</span>
+
+    @FXML 
+    public void handleArmourMinus(ActionEvent event) { 
+
+<span class="nc" id="L192">        shop.subtractArmour();</span>
+<span class="nc" id="L193">    }</span>
+
+    @FXML 
+    public void handleArmourPlus(ActionEvent event) { 
+
+<span class="nc" id="L198">        shop.addArmour();</span>
+<span class="nc" id="L199">    }</span>
+
+    @FXML 
+    public void handleShieldMinus(ActionEvent event) { 
+
+<span class="nc" id="L204">        shop.subtractShield();</span>
+<span class="nc" id="L205">    }</span>
+
+    @FXML 
+    public void handleShieldPlus(ActionEvent event) { 
+
+<span class="nc" id="L210">        shop.addShield();</span>
+<span class="nc" id="L211">    }</span>
+
+     /**
+    * Display whether the purchase is successful or if there is not enough gold 
+    * to complete the transaction after pressing the purchase button. 
+    * @param event
+    */
+    @FXML
+    public void handlePurchase(ActionEvent event) {
+
+<span class="nc bnc" id="L221" title="All 2 branches missed.">        if (shop.sufficientFunds(character.getStats())) {</span>
+<span class="nc" id="L222">            shop.finaliseTransaction(character.getStats(), world);</span>
+<span class="nc" id="L223">            notEnoughGold.setVisible(false);</span>
+<span class="nc" id="L224">            purchaseSuccessful.setVisible(true);</span>
+        }        
+
+        else {
+
+<span class="nc" id="L229">            purchaseSuccessful.setVisible(false);</span>
+<span class="nc" id="L230">            notEnoughGold.setVisible(true);</span>
+        }
+
+<span class="nc" id="L233">    }</span>
+
+   
+
+    @FXML
+    public void handleLeaveShop(){
+<span class="nc" id="L239">        gameSwitcher.switchMenu();</span>
+
+        // Set both labels to not visible whenever the shop is left. 
+<span class="nc" id="L242">        notEnoughGold.setVisible(false);</span>
+<span class="nc" id="L243">        purchaseSuccessful.setVisible(false);</span>
+
+<span class="nc" id="L245">        shop.setShopping(false);</span>
+<span class="nc" id="L246">    }</span>
+
+
+    @FXML
+    public void initialize() {
+
+<span class="nc" id="L252">        totalNumberField.setText(&quot;0&quot;);</span>
+<span class="nc" id="L253">        availableGold.setText(&quot;0&quot;);</span>
+
+        
+<span class="nc" id="L256">        availableGold.textProperty().bind(Bindings.convert(character.getStats().goldValueProperty()));</span>
+<span class="nc" id="L257">        totalNumberField.textProperty().bind(Bindings.convert(shop.totalValue()));</span>
+
+<span class="nc" id="L259">        consumableLabel.textProperty().bind(Bindings.convert(shop.potionsValueProperty()));</span>
+<span class="nc" id="L260">        swordLabel.textProperty().bind(Bindings.convert(shop.swordsValueProperty()));</span>
+<span class="nc" id="L261">        stakeLabel.textProperty().bind(Bindings.convert(shop.stakesValueProperty()));</span>
+<span class="nc" id="L262">        staffLabel.textProperty().bind(Bindings.convert(shop.staffsValueProperty()));</span>
+<span class="nc" id="L263">        helmetLabel.textProperty().bind(Bindings.convert(shop.helmetsValueProperty()));</span>
+<span class="nc" id="L264">        armourLabel.textProperty().bind(Bindings.convert(shop.armoursValueProperty()));</span>
+<span class="nc" id="L265">        shieldLabel.textProperty().bind(Bindings.convert(shop.shieldsValueProperty()));</span>
+
+<span class="nc" id="L267">    }</span>
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

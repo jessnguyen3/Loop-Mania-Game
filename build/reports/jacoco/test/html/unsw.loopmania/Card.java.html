@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Card.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">21T2-cs2511-project</a> &gt; <a href="index.source.html" class="el_package">unsw.loopmania</a> &gt; <span class="el_source">Card.java</span></div><h1>Card.java</h1><pre class="source lang-java linenums">package unsw.loopmania;
+
+import javafx.beans.property.SimpleIntegerProperty;
+
+/**
+ * a Card in the world
+ * which doesn't move
+ */
+public abstract class Card extends StaticEntity {
+    /**
+     * Static Final integers to represent 
+     */
+    private static final int EXPREWARD = 20;
+    private static final int GOLDREWARD = 100;
+
+    /**
+     * cardType
+     */
+    protected String cardType;
+
+    /**
+     * constructor for Card
+     * @param x
+     * @param y
+     */
+    public Card(SimpleIntegerProperty x, SimpleIntegerProperty y) {
+<span class="fc" id="L27">        super(x, y);</span>
+<span class="fc" id="L28">    }</span>
+
+    /**
+     * getter for card type
+     * @return String
+     */
+    public String getCardType() {
+<span class="fc" id="L35">        return cardType;</span>
+    }
+
+    /**
+     * method to award the player when a card is removed
+     * @param character
+     */
+    public void removeCardAward(Character character) {
+<span class="fc" id="L43">        Statistics stats = character.getStats();</span>
+<span class="fc" id="L44">        stats.setExp(stats.getExp() + EXPREWARD);</span>
+<span class="fc" id="L45">        stats.setGold(stats.getGold() + GOLDREWARD);</span>
+<span class="fc" id="L46">    }</span>
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>
